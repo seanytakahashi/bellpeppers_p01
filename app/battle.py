@@ -1,0 +1,5 @@
+# Sean Takahashi, Ivan Chen, James Lei, Eviss Wu
+# Bell Peppers
+# SoftDev
+# P01
+# 2025-12-22m
