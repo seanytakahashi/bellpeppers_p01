@@ -9,3 +9,12 @@ INITIAL DD REVIEW -- 2025-12-03 10:15
 seanT -- 2025-12-03 10:18
 - Updated readme with project name, description, and roster roles
 
+seanT -- 2025-12-04 10:55
+- Made readme for API keys
+- Start authentication functionality
+
+jamesL -- 2025-12-04 11:00
+- Initialize database
+
+ivanC -- 2025-12-04 11:01
+- Investigated species API and made API card
