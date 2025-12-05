@@ -1,32 +1,22 @@
 import utility
 
-def get_common(key):
-    data = utility.call_api("Countries", "/" + key)
+def getCommon(key):
+    url = "https://restcountries.com/v3.1/alpha/" + key
+    with urllib.request.urlopen(url) as response:
+        data = json.loads(response.read())
     common = data[0]['name']['common']
-    return common
+    #print(common)
+    return(common)
 
-def get_pop(key):
-    data = utility.call_api("Countries", "/" + key)
-    pop = data[0]['maps']['population']
-    return pop
-
-def get_list(username):
-    country = utility.get_user(username)
-    data = utility.call_api("Countries", "/" + country)
+def getList(key):
+    url = "https://restcountries.com/v3.1/alpha/" + key
+    with urllib.request.urlopen(url) as response:
+        data = json.loads(response.read())
     list = data[0]['borders']
-    return list
+    #print(list)
+    return(list)
 
-def get_common_list():
-    list = []
-    for country in get_list():
-        list.append(get_common(country))
-    return list
-
-def get_pop_list():
-    list = []
-    for country in get_list():
-        list.append(get_pop_list(country))
-    return list
+print(getCommon(getList('GER')[0]))
 
 def make_numbers(p):
     nums = []
