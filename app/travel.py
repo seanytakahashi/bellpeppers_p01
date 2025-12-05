@@ -3,16 +3,23 @@ import urllib.parse
 import json
 from flask import Flask
 
-key = "GER" # CHANGEABLE. THIS IS A TEST CASE.
-url = "https://restcountries.com/v3.1/alpha/" + key
+def getCommon(key):
+    url = "https://restcountries.com/v3.1/alpha/" + key
+    with urllib.request.urlopen(url) as response:
+        data = json.loads(response.read())
+    common = data[0]['name']['common']
+    #print(common)
+    return(common)
 
-with urllib.request.urlopen(url) as response:
-    data = json.loads(response.read())
+def getList(key):
+    url = "https://restcountries.com/v3.1/alpha/" + key
+    with urllib.request.urlopen(url) as response:
+        data = json.loads(response.read())
+    list = data[0]['borders']
+    #print(list)
+    return(list)
 
-
-common = data[0]['name']['common']
-
-print(common)
+print(getCommon(getList('GER')[0]))
 
 # if __name__ == '__main__':
 #     app.run(debug=True)
