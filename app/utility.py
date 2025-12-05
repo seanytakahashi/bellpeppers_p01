@@ -5,7 +5,9 @@
 # 2025-12-22m
 
 import sqlite3
-import urllib
+import urllib.request
+import urllib.parse
+import json
 
 DB_FILE = "data.db"
 db = sqlite3.connect(DB_FILE, check_same_thread=False)
@@ -36,10 +38,11 @@ def call_api(api_name, path, params={}):
             path = "https://ecos.fws.gov/ecp/pullreports/catalog/species/report/species/export" + path
         case "Countries":
             path = "https://restcountries.com/v3.1/" + path
-    path += urllib.urlencode(params)
-    with urllib.requests.urlopen(path) as response:
+    path += urllib.parse.urlencode(params)
+    with urllib.request.urlopen(path) as response:
         data = response.read()
     return json.loads(data);
 
 # insert_query("profiles", {"username": "Testing", "password": "Testing"})
 # print(general_query("SELECT * FROM profiles WHERE username=?", ["Testing"]))
+# print(call_api("DND", "equipment-categories/simple-weapons")["index"])
