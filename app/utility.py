@@ -5,6 +5,7 @@
 # 2025-12-22m
 
 import sqlite3
+import urllib
 
 DB_FILE = "data.db"
 db = sqlite3.connect(DB_FILE, check_same_thread=False)
@@ -17,9 +18,23 @@ def insert_query(table, data):
     c.close()
     db.commit()
 
-# parameters: [val1, val2]
-def general_query(query_string, parameters=()):
+# params: [val1, val2]
+def general_query(query_string, params=()):
     c = db.cursor()
-    c.execute(query_string, parameters)
+    c.execute(query_string, params)
     c.close()
     db.commit()
+
+# params: {"key": value}
+def call_api(api_name, path, params={}):
+    match api_name:
+        case "DND":
+            path = "https://www.dnd5eapi.co/api/2014/" + path
+        case "Species":
+            path = "https://ecos.fws.gov/ecp/pullreports/catalog/species/report/species/export" + path
+        case "Countries":
+            path = "https://restcountries.com/v3.1/" + path
+    path += urllib.urlencode(params)
+    with urllib.requests.urlopen(path) as response:
+        data = response.read()
+    return json.loads(data);
