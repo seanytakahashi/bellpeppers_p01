@@ -1,5 +1,7 @@
 import utility
 
+curKey = 'GER'
+
 def getCommon(key):
     url = "https://restcountries.com/v3.1/alpha/" + key
     with urllib.request.urlopen(url) as response:
@@ -8,15 +10,22 @@ def getCommon(key):
     #print(common)
     return(common)
 
-def getList(key):
-    url = "https://restcountries.com/v3.1/alpha/" + key
+def getList():
+    url = "https://restcountries.com/v3.1/alpha/" + curKey
     with urllib.request.urlopen(url) as response:
         data = json.loads(response.read())
     list = data[0]['borders']
     #print(list)
     return(list)
 
-print(getCommon(getList('GER')[0]))
+def getCommonList():
+    list = []
+    for country in getList():
+        list.append(getCommon(country));
+    #print(list)
+    return list
+
+getCommonList()
 
 def make_numbers(p):
     nums = []
