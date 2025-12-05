@@ -22,8 +22,10 @@ def insert_query(table, data):
 def general_query(query_string, params=()):
     c = db.cursor()
     c.execute(query_string, params)
+    output = c.fetchall()
     c.close()
     db.commit()
+    return output
 
 # params: {"key": value}
 def call_api(api_name, path, params={}):
@@ -38,3 +40,6 @@ def call_api(api_name, path, params={}):
     with urllib.requests.urlopen(path) as response:
         data = response.read()
     return json.loads(data);
+
+# insert_query("profiles", {"username": "Testing", "password": "Testing"})
+# print(general_query("SELECT * FROM profiles WHERE username=?", ["Testing"]))
