@@ -30,3 +30,7 @@ ivanC -- 2025-12-05 10:59
 
 evissW -- 2025-12-05 10:59
 - Worked on API integration and functionality
+
+seanT -- 2025-12-07 17:47
+- Made basic Flask app
+- Linked login and signup templates
