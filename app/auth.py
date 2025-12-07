@@ -13,7 +13,7 @@ import utility
 
 @bp.get('/signup')
 def signup_get():
-    return render_template('auth/signup.html')
+    return render_template('signup.html')
 
 @bp.post('/signup')
 def signup_post():
@@ -23,17 +23,17 @@ def signup_post():
     row = utility.general_query("SELECT username FROM profiles WHERE username = ?", username)
     if not row:
         hashed_pswd = generate_password_hash(password)
-        utility.insert_query(profiles, ({"username": username, "password": hashed_pswd})
+        utility.insert_query("profiles", ({"username": username, "password": hashed_pswd}))
         flash('Signup successful!')
-        return redirect(url_for('auth/login_get'))
+        return redirect(url_for('login_get'))
     else:
         flash("Username already taken!")
-        return redirect(url_for('auth/signup_get'))
+        return redirect(url_for('signup_get'))
 
 
 @bp.get('/login')
 def login_get():
-    return render_template('auth/login.html')
+    return render_template('login.html')
 
 @bp.post('/login')
 def login_post():
