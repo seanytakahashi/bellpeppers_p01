@@ -35,5 +35,14 @@ def profile_get():
     user_balance = user_info[1]
     return render_template('profile.html', user=user)
 
+# Display possible travel locations
+@app.get('/travel')
+def travel_get():
+    return ""
+
+@app.post('/travel')
+def travel_post():
+    return ""
+
 if __name__ == '__main__':
     app.run()
