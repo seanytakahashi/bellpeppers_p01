@@ -32,6 +32,8 @@ def signup_post():
 
 @bp.get('/logout')
 def logout_get():
+    session.pop('username', None)
+    flash("Logout successful!")
     return render_template('login.html')
 
 @bp.get('/login')
@@ -48,7 +50,7 @@ def login_post():
     if check_password_hash(row[0][0], password):
         flash('Login successful!')
         session['username'] = username
-        redirect(url_for('home_get'))
+        return redirect(url_for('home_get'))
     else:
         flash('Error: Username or password incorrect')
-        redirect(url_for('auth.login_get'))
+        return redirect(url_for('auth.login_get'))
