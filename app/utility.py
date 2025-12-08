@@ -32,10 +32,10 @@ def general_query(query_string, params=()):
 # params: {"key": value}
 def call_api(api_name, path, params={}):
     match api_name:
-        case "DND":
+        case "Dnd":
             path = "https://www.dnd5eapi.co/api/2014/" + path
         case "Species":
-            path = "https://ecos.fws.gov/ecp/pullreports/catalog/species/report/species/export" + path
+            path = "https://ecojsons.fws.gov/ecp/pullreports/catalog/species/report/species/export" + path
         case "Countries":
             path = "https://restcountries.com/v3.1/" + path
     path += urllib.parse.urlencode(params)
