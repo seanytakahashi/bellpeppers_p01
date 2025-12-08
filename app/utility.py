@@ -5,7 +5,9 @@
 # 2025-12-22m
 
 import sqlite3
-import urllib
+import urllib.request
+import urllib.parse
+import json
 
 DB_FILE = "data.db"
 db = sqlite3.connect(DB_FILE, check_same_thread=False)
@@ -22,19 +24,44 @@ def insert_query(table, data):
 def general_query(query_string, params=()):
     c = db.cursor()
     c.execute(query_string, params)
+    output = c.fetchall()
     c.close()
     db.commit()
+    return output
 
 # params: {"key": value}
 def call_api(api_name, path, params={}):
     match api_name:
-        case "DND":
+        case "Dnd":
             path = "https://www.dnd5eapi.co/api/2014/" + path
         case "Species":
-            path = "https://ecos.fws.gov/ecp/pullreports/catalog/species/report/species/export" + path
+            path = "https://ecojsons.fws.gov/ecp/pullreports/catalog/species/report/species/export" + path
         case "Countries":
             path = "https://restcountries.com/v3.1/" + path
-    path += urllib.urlencode(params)
-    with urllib.requests.urlopen(path) as response:
+    path += urllib.parse.urlencode(params)
+    with urllib.request.urlopen(path) as response:
         data = response.read()
     return json.loads(data);
+
+def findArea(polygon):
+    sum1 = 0
+    sum2 = 0
+    set = polygon.split(",")
+    pair1 = []
+    pair2 = []
+    firstpair = []
+    for coords in set:
+        pair1 = pair2[:]
+        pair2 = coords.split(" ")
+        if (len(firstpair) < 1):
+            firstpair = coords.split(" ")
+        else:
+            sum1 += (int(pair1[0])*int(pair2[1]))
+            sum2 += (int(pair1[1])*int(pair2[0]))
+    sum1 += (int(pair1[0])*int(firstpair[1]))
+    sum2 += (int(pair1[1])*int(firstpair[0]))
+    return (0.5 * abs(sum1-sum2))
+
+# insert_query("profiles", {"username": "Testing", "password": "Testing"})
+# print(general_query("SELECT * FROM profiles WHERE username=?", ["Testing"]))
+# print(call_api("DND", "equipment-categories/simple-weapons")["index"])

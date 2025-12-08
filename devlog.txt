@@ -18,3 +18,19 @@ jamesL -- 2025-12-04 11:00
 
 ivanC -- 2025-12-04 11:01
 - Investigated species API and made API card
+
+seanT -- 2025-12-05 10:59
+- Updated authentication with database operations
+
+jamesL -- 2025-12-05 10:59
+- Wrote helper database and API functions
+
+ivanC -- 2025-12-05 10:59
+- Working on function to find area of polygon to be used for species API
+
+evissW -- 2025-12-05 10:59
+- Worked on API integration and functionality
+
+seanT -- 2025-12-07 17:47
+- Made basic Flask app
+- Linked login and signup templates

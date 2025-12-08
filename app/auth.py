@@ -9,26 +9,31 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+import utility
+
 @bp.get('/signup')
 def signup_get():
-    return render_template('auth/signup.html')
+    return render_template('signup.html')
 
 @bp.post('/signup')
 def signup_post():
     username = request.form.get('username')
     password = request.form.get('password')
     #check if username exist
+    row = utility.general_query("SELECT username FROM profiles WHERE username = ?", username)
+    if not row:
+        hashed_pswd = generate_password_hash(password)
+        utility.insert_query("profiles", ({"username": username, "password": hashed_pswd}))
+        flash('Signup successful!')
+        return redirect(url_for('login_get'))
+    else:
+        flash("Username already taken!")
+        return redirect(url_for('signup_get'))
 
-    hashed_pswd = generate_password_hash(password)
-
-    #add info to db
-
-    flash('Signup successful!')
-    return redirect(url_for('auth/login_get'))
 
 @bp.get('/login')
 def login_get():
-    return render_template('auth/login.html')
+    return render_template('login.html')
 
 @bp.post('/login')
 def login_post():
@@ -36,3 +41,11 @@ def login_post():
     password = request.form.get('password')
 
     # check for username and pswd
+    row = utility.general_query("SELECT password FROM profiles WHERE username = ?", username)
+    if check_password_hash(row, password):
+        flash('Login successful!')
+        session['username'] = username
+        redirect(url_for('home_get'))
+    else:
+        flash('Error: Username or password incorrect')
+        redirect(url_for('login_get'))
