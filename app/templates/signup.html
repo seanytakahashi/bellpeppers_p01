@@ -6,54 +6,22 @@
  2025-12-22m
 -->
 
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+{% block content %}
 
-<div class="header">
-      <h1>
-        Create account
-      </h1>
-    </div>
+<p>To register a new account, please input a <strong> username</strong> and <i>strong</i> <strong>password</strong> combination below!</p>
 
-    <div class = "middle">
-      {% if logged_in %}
-        <p>Welcome, <strong>{{ current_user }}</strong>!</p>
-        <p>Registering for another account?</p>
-      {% else %}
-        <h3> Welcome, New User! </h3>
-      {% endif %}
-      <hr>
-      <p>
-        To register a new account, please input a <strong> username</strong> and <i>strong</i> <strong>password</strong> combination below! <br>
-      </p>
-
-      <div class = "credentials">
-        <form action="{{ url_for('auth.signup_post') }}" method="post">
-          <p><strong>Username<strong></p>
-          <input type="text" name="username" placeholder="Username" title="CASE SENSITIVE!">
-          <br>
-          <p><strong>Password<strong></p>
-          <input type="password" name="password" placeholder="Password" title="CASE SENSITIVE!">
-          <p></p>
-          <button type="submit" title="Register?">Register</button>
-
-        </form>
-      </div>
-
-    </div>
-
+<div class = "credentials">
+  <form action="{{ url_for('auth.signup_post') }}" method="post">
+    <p><strong>Username<strong></p>
+    <input type="text" name="username" placeholder="Username" title="CASE SENSITIVE!">
     <br>
-    <hr>
-    <div class = "footer">
-      <p>
-        <br> Already have an account? <a href= "/auth/login"> Login</a> to an existing account.
-      </p>
-      <p>
-        Return to <a href= "/"> homepage</a><br>
-      </p>
-    </div>
+    <p><strong>Password<strong></p>
+    <input type="password" name="password" placeholder="Password" title="CASE SENSITIVE!">
+    <p></p>
+    <button type="submit" title="Register?">Register</button>
+  </form>
+</div>
 
-
-  </body>
-
-</html>
+{% endblock %}

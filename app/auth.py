@@ -20,16 +20,19 @@ def signup_post():
     username = request.form.get('username')
     password = request.form.get('password')
     #check if username exist
-    row = utility.general_query("SELECT username FROM profiles WHERE username = ?", username)
+    row = utility.general_query("SELECT username FROM profiles WHERE username = ?", [username])
     if not row:
         hashed_pswd = generate_password_hash(password)
         utility.insert_query("profiles", ({"username": username, "password": hashed_pswd}))
         flash('Signup successful!')
-        return redirect(url_for('login_get'))
+        return redirect(url_for('auth.login_get'))
     else:
         flash("Username already taken!")
-        return redirect(url_for('signup_get'))
+        return redirect(url_for('auth.signup_get'))
 
+@bp.get('/logout')
+def logout_get():
+    return render_template('login.html')
 
 @bp.get('/login')
 def login_get():
@@ -41,11 +44,11 @@ def login_post():
     password = request.form.get('password')
 
     # check for username and pswd
-    row = utility.general_query("SELECT password FROM profiles WHERE username = ?", username)
-    if check_password_hash(row, password):
+    row = utility.general_query("SELECT password FROM profiles WHERE username = ?", [username])
+    if check_password_hash(row[0][0], password):
         flash('Login successful!')
         session['username'] = username
         redirect(url_for('home_get'))
     else:
         flash('Error: Username or password incorrect')
-        redirect(url_for('login_get'))
+        redirect(url_for('auth.login_get'))
