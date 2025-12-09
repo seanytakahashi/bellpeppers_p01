@@ -8,6 +8,8 @@ import sqlite3
 import urllib.request
 import urllib.parse
 import json
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 DB_FILE = "data.db"
 db = sqlite3.connect(DB_FILE, check_same_thread=False)
@@ -35,7 +37,7 @@ def call_api(api_name, path, params={}):
         case "Dnd":
             path = "https://www.dnd5eapi.co/api/2014/" + path
         case "Species":
-            path = "https://ecojsons.fws.gov/ecp/pullreports/catalog/species/report/species/export" + path
+            path = "https://ecos.fws.gov/ecp/pullreports/catalog/species/report/species/export?format=json" + path
         case "Countries":
             path = "https://restcountries.com/v3.1/" + path
     path += urllib.parse.urlencode(params)
@@ -64,4 +66,5 @@ def findArea(polygon):
 
 # insert_query("profiles", {"username": "Testing", "password": "Testing"})
 # print(general_query("SELECT * FROM profiles WHERE username=?", ["Testing"]))
-# print(call_api("DND", "equipment-categories/simple-weapons")["index"])
+# print(call_api("Dnd", "equipment-categories/simple-weapons")["index"])
+# print(call_api("Species", "&columns=%2Fspecies%40cn%2Csn%2Cstatus%2Crange_envelope%2Cgn&sort=%2Fspecies%40cn asc%3B%2Fspecies%40sn asc&filter=%2Fspecies%40range_envelope is not null&filter=%2Fspecies%40status not in ('Experimental%20Population%2C%20Non-Essential')".replace(" ", "%20"))["data"][0])
