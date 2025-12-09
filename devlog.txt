@@ -43,3 +43,7 @@ ivanC -- 2025-12-08 11:00
 
 seanT -- 2025-12-08 11:00
 - Testing of login and signup
+
+seanT -- 2025-12-09 6:28
+- Basic profile page working
+- Fixed wrong username login error
