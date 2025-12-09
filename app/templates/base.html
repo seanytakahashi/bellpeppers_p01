@@ -14,16 +14,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <header>
-      <h1>Wildlife Killer {{ self.title() }}</h1>
-      {% if "username" in session %}
-      <a href="{{ url_for('profile_get') }}">My Profile</a>
-      <a href="{{ url_for('auth.logout_get') }}">Log Out</a>
-      {% else %}
-      <a href="{{ url_for('auth.login_get') }}">Log in / Register</a>
-      <a href="{{ url_for('auth.signup_get') }}">Sign Up</a>
-      {% endif %}
-    </header>
+    <nav class="navbar">
+      <div class="container-fluid">
+        <h1 class="navbar">Wildlife Killer {{ self.title() }}</h1>
+        {% if "username" in session %}
+        <a href="{{ url_for('home_get') }}">Home</a>
+        <a href="{{ url_for('profile_get') }}">My Profile</a>
+        <a href="{{ url_for('auth.logout_get') }}">Log Out</a>
+        {% else %}
+        <a href="{{ url_for('auth.login_get') }}">Log in / Register</a>
+        <a href="{{ url_for('auth.signup_get') }}">Sign Up</a>
+        {% endif %}
+      </div>
+    </nav>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
       {% for category, message in messages %}
