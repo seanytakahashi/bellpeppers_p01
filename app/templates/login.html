@@ -6,47 +6,20 @@
  2025-12-22m
 -->
 
-<!DOCTYPE html>
-<html lang="en">
-    <div class="header">
-      <h1>
-        Login
-      </h1>
-    </div>
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
 
-    <div class = "middle">
-      {% if logged_in %}
-        <p>Welcome, <strong>{{ current_user }}</strong>!</p>
+<div class="credentials">
+  <form action="{{ url_for('auth.login_post') }}" method="POST"> <!--assigns route to home/other pages after form is submitted, placeholder for now-->
+    <p><strong>Username<strong></p>
+    <input type="text" name="username" placeholder="Username" title="CASE SENSITIVE!">
+    <br>
+    <p><strong>Password<strong></p>
+    <input type="password" name="password" placeholder="Password" title="CASE SENSITIVE!">
+    <p></p>
+    <button type="submit" title="Log in?">Login</button>
+  </form>
+</div>
 
-      {% else %}
-      <h3> Welcome, User! </h3>
-      <hr>
-
-      <div class = "credentials">
-         <form action="/login", method="POST"> <!--assigns route to home/other pages after form is submitted, placeholder for now-->
-           <p><strong>Username<strong></p>
-           <input type="text" name="username" placeholder="Username" title="CASE SENSITIVE!">
-           <br>
-           <p><strong>Password<strong></p>
-           <input type="password" name="password" placeholder="Password" title="CASE SENSITIVE!">
-           <p></p>
-           <button type="submit" title="Log in?">Login</button>
-         </form>
-       </div>
-     </div>
-
-     <br>
-     <hr>
-     <div class = "footer">
-       <p>
-         <br> Need an account?<a href= "/auth/register"> Register</a> for an new account!<br>
-       </p>
-      </div>
-      {% endif %}
-      <p>
-        Return to <a href= "/"> homepage</a><br>
-      </p>
-
-
-  </body>
-</html>
+{% endblock %}

@@ -30,10 +30,9 @@ def home_get():
 @app.get('/profile')
 def profile_get():
     user = session['username']
-    user_info = utility.general_query("SELECT (country, balance) FROM profiles WHERE username = ?;", (user))
-    user_country = user_info[0]
-    user_balance = user_info[1]
-    return render_template('profile.html', user=user)
+    user_info = utility.general_query("SELECT country, balance FROM profiles WHERE username = ?;", [user])
+    user_country, user_balance = user_info[0]
+    return render_template('profile.html', country=user_country, balance=user_balance)
 
 # Display possible travel locations
 @app.get('/travel')

@@ -6,7 +6,13 @@
  2025-12-22m
 -->
 
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
 
-</html>
+<p>Welcome, <strong>{{ current_user }}</strong>!</p>
+
+<p>Current country: <strong>{{ country }}</strong></p>
+<p>Current balance: <strong>{{ balance }}</strong></p>
+
+{% endblock %}
