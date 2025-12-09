@@ -48,8 +48,10 @@ def login_post():
     # check for username and pswd
     row = utility.general_query("SELECT password FROM profiles WHERE username = ?", [username])
 
-    # check if user in db
-    if check_password_hash(row[0][0], password):
+    if not row:
+        flash('Error: Username or password incorrect')
+        return redirect(url_for('auth.login_get'))
+    elif check_password_hash(row[0][0], password):
         flash('Login successful!')
         session['username'] = username
         return redirect(url_for('home_get'))
