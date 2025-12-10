@@ -10,16 +10,16 @@
 {% block title %}Login{% endblock %}
 {% block content %}
 
-<div class="credentials">
-  <form action="{{ url_for('auth.login_post') }}" method="POST"> <!--assigns route to home/other pages after form is submitted, placeholder for now-->
-    <p><strong>Username<strong></p>
-    <input type="text" name="username" placeholder="Username" title="CASE SENSITIVE!">
-    <br>
-    <p><strong>Password<strong></p>
-    <input type="password" name="password" placeholder="Password" title="CASE SENSITIVE!">
-    <p></p>
-    <button type="submit" title="Log in?">Login</button>
-  </form>
-</div>
+<form action="{{ url_for('auth.login_post') }}" method="POST">
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input type="text" class="form-control" name="username" placeHolder="Username" id="username"></input>
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" name="password" placeHolder="Password" id="password"></input>
+  </div>
+  <button type="submit" class="btn btn-primary">Login</button>
+</form>
 
 {% endblock %}

@@ -54,7 +54,7 @@ def login_post():
     elif check_password_hash(row[0][0], password):
         flash('Login successful!', 'success')
         session['username'] = username
-        return redirect(url_for('home_get'))
+        return redirect(url_for('profile_get'))
     else:
         flash('Error: Username or password incorrect', 'danger')
         return redirect(url_for('auth.login_get'))
