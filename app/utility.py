@@ -45,10 +45,11 @@ def call_api(api_name, path, params={}):
         data = response.read()
     return json.loads(data)
 
-def findArea(polygon):
+def find_area(polygon):
     sum1 = 0
     sum2 = 0
-    set = polygon.split(",")
+    polygon.replace(",", " ")
+    set = polygon.split(" ")
     pair1 = []
     pair2 = []
     firstpair = []
@@ -58,10 +59,10 @@ def findArea(polygon):
         if (len(firstpair) < 1):
             firstpair = coords.split(" ")
         else:
-            sum1 += (int(pair1[0])*int(pair2[1]))
-            sum2 += (int(pair1[1])*int(pair2[0]))
-    sum1 += (int(pair1[0])*int(firstpair[1]))
-    sum2 += (int(pair1[1])*int(firstpair[0]))
+            sum1 += (float(pair1[0])*float(pair2[1]))
+            sum2 += (float(pair1[1])*float(pair2[0]))
+    sum1 += (float(pair1[0])*float(firstpair[1]))
+    sum2 += (float(pair1[1])*float(firstpair[0]))
     return (0.5 * abs(sum1-sum2))
 
 # insert_query("profiles", {"username": "Testing", "password": "Testing"})

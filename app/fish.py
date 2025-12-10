@@ -7,7 +7,7 @@
 import utility
 import random
 
-def getFish():
+def get_fish():
     fishSet = utility.call_api("Species", "/export", {
         "format": "json",
         "columns": "/species@cn,sn,status,range_envelope,gn",
