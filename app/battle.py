@@ -6,6 +6,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from utility import call_api
+from fish import get_fish
 import random
 
 bp = Blueprint('battle', __name__, url_prefix='/battle')
@@ -17,6 +18,9 @@ def get_random_weapon():
 
 @bp.get('/')
 def battle_get():
-    return render_template("battle.html")
+    weapon = get_random_weapon()
+    fish = get_fish()
 
-print(get_random_weapon())
+    return render_template("battle.html", fish=fish, weapon=weapon)
+
+# print(get_random_weapon())
