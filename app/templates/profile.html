@@ -16,13 +16,22 @@
 <p>Current balance: <strong>{{ balance }}</strong></p>
 
 <h3>Fish Owned</h3>
-{% for fish in all_fish %}
-<li><strong>{{fish[0]}}:</strong> {{fish[1]}}</li>
-{% endfor %}
+{% if all_fish %}
+  {% for fish in all_fish %}
+    <li><strong>{{fish.common_name}}:</strong> {{fish.number_owned}}</li>
+  {% endfor %}
+{% else %}
+  <p>No fish owned</p>
+{% endif %}
+
 
 <h3>Weapons Owned</h3>
-{% for weapons in all_weapons %}
-<li><strong>{{weapons[0]}}:</strong> Durability {{weapons[1]}}</li>
-{% endfor %}
+{% if all_weapons %}
+  {% for weapons in all_weapons %}
+    <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}}</li>
+  {% endfor %}
+{% else %}
+  <p>No weapons owned</p>
+{% endif %}
 
 {% endblock %}
