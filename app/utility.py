@@ -35,15 +35,15 @@ def general_query(query_string, params=()):
 def call_api(api_name, path, params={}):
     match api_name:
         case "Dnd":
-            path = "https://www.dnd5eapi.co/api/2014/" + path
+            path = "https://www.dnd5eapi.co" + path
         case "Species":
-            path = "https://ecos.fws.gov/ecp/pullreports/catalog/species/report/species/export?format=json" + path
+            path = "https://ecos.fws.gov/ecp/pullreports/catalog/species/report/species" + path
         case "Countries":
-            path = "https://restcountries.com/v3.1/" + path
-    path += urllib.parse.urlencode(params)
+            path = "https://restcountries.com/v3.1" + path
+    path += '?' + urllib.parse.urlencode(params)
     with urllib.request.urlopen(path) as response:
         data = response.read()
-    return json.loads(data);
+    return json.loads(data)
 
 def findArea(polygon):
     sum1 = 0
@@ -66,5 +66,12 @@ def findArea(polygon):
 
 # insert_query("profiles", {"username": "Testing", "password": "Testing"})
 # print(general_query("SELECT * FROM profiles WHERE username=?", ["Testing"]))
-# print(call_api("Dnd", "equipment-categories/simple-weapons")["index"])
-# print(call_api("Species", "&columns=%2Fspecies%40cn%2Csn%2Cstatus%2Crange_envelope%2Cgn&sort=%2Fspecies%40cn asc%3B%2Fspecies%40sn asc&filter=%2Fspecies%40range_envelope is not null&filter=%2Fspecies%40status not in ('Experimental%20Population%2C%20Non-Essential')".replace(" ", "%20"))["data"][0])
+# print(call_api("Dnd", "/equipment-categories/simple-weapons")["index"])
+
+# print(call_api("Species", "/export", {
+#     "format": "json",
+#     "columns": "/species@cn,sn,status,range_envelope,gn",
+#     "sort": "/species@cn asc;/species@sn asc",
+#     "filter": "/species@range_envelope is not null",
+#     "filter": "/species@status not in ('Experimental Population, Non-Essential')"
+# })["data"][0])

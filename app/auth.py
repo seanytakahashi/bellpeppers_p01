@@ -24,16 +24,16 @@ def signup_post():
     if not row:
         hashed_pswd = generate_password_hash(password)
         utility.insert_query("profiles", ({"username": username, "password": hashed_pswd}))
-        flash('Signup successful!')
+        flash('Signup successful!', 'success')
         return redirect(url_for('auth.login_get'))
     else:
-        flash("Username already taken!")
+        flash("Username already taken!", 'danger')
         return redirect(url_for('auth.signup_get'))
 
 @bp.get('/logout')
 def logout_get():
     session.pop('username', None)
-    flash("Logout successful!")
+    flash("Logout successful!", 'success')
     return render_template('login.html')
 
 @bp.get('/login')
@@ -49,12 +49,12 @@ def login_post():
     row = utility.general_query("SELECT password FROM profiles WHERE username = ?", [username])
 
     if not row:
-        flash('Error: Username or password incorrect')
+        flash('Error: Username or password incorrect', 'danger')
         return redirect(url_for('auth.login_get'))
     elif check_password_hash(row[0][0], password):
-        flash('Login successful!')
+        flash('Login successful!', 'success')
         session['username'] = username
         return redirect(url_for('home_get'))
     else:
-        flash('Error: Username or password incorrect')
+        flash('Error: Username or password incorrect', 'danger')
         return redirect(url_for('auth.login_get'))
