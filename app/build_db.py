@@ -11,6 +11,8 @@ CREATE TABLE profiles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE,
     password TEXT,
+    equipped_weapon TEXT,
+    health INTEGER,
     country TEXT DEFAULT 'USA',
     balance INTEGER DEFAULT 0
 );""")

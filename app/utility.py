@@ -14,7 +14,19 @@ ssl._create_default_https_context = ssl._create_unverified_context
 DB_FILE = "data.db"
 db = sqlite3.connect(DB_FILE, check_same_thread=False)
 
-# data: {"key": value}
+CACHE_FILE = "cache.db"
+cache = sqlite3.connect(CACHE_FILE, check_same_thread=False)
+
+# data: {"keys", value}
+# FIRST KEY VALUE PAIR MUST BE PRIMARY KEY
+def cache_entry(table, data):
+    c = cache.cursor()
+    c.execute(f"SELECT * FROM {table} WHERE {list(data)[0]}=?", list(data.values())[0])
+    if c.fetchone() is None:
+        placeholder = ["?"] * len(data)
+        c.execute(f"INSERT INTO {table} {tuple(data.keys())} VALUES ({', '.join(placeholder)});", tuple(data.values()))
+
+# data: "key": value}
 def insert_query(table, data):
     c = db.cursor()
     placeholder = ["?"] * len(data)
@@ -31,8 +43,8 @@ def general_query(query_string, params=()):
     db.commit()
     return output
 
-# params: {"key": value}
-def call_api(api_name, path, params={}):
+# params: [("key", value)]
+def call_api(api_name, path, params=[]):
     match api_name:
         case "Dnd":
             path = "https://www.dnd5eapi.co" + path
