@@ -21,7 +21,7 @@ cache = sqlite3.connect(CACHE_FILE, check_same_thread=False)
 # FIRST KEY VALUE PAIR MUST BE PRIMARY KEY
 def cache_entry(table, data):
     c = cache.cursor()
-    c.execute(f"SELECT * FROM {table} WHERE {list(data)[0]}=?", list(data.values())[0])
+    c.execute(f"SELECT * FROM {table} WHERE {list(data)[0]}=?", [list(data.values())[0]])
     if c.fetchone() is None:
         placeholder = ["?"] * len(data)
         c.execute(f"INSERT INTO {table} {tuple(data.keys())} VALUES ({', '.join(placeholder)});", tuple(data.values()))
