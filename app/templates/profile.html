@@ -12,6 +12,7 @@
 
 <p>Welcome, <strong>{{ current_user }}</strong>!</p>
 
+<p>Current health: <strong>{{ user_health }}</strong></p>
 <p>Current country: <strong>{{ country }}</strong></p>
 <p>Current balance: <strong>{{ balance }}</strong></p>
 
@@ -28,6 +29,7 @@
 <h3>Weapons Owned</h3>
 {% if all_weapons %}
   {% for weapons in all_weapons %}
+  <!-- Have equipped status and equip button for non-equipped weapons-->
     <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}}</li>
   {% endfor %}
 {% else %}

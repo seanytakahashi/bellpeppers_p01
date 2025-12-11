@@ -23,13 +23,13 @@ def home_get():
 @app.get('/profile')
 def profile_get():
     user = session['username']
-    user_info = utility.general_query("SELECT country, balance, id FROM profiles WHERE username = ?;", [user])
-    user_country, user_balance, user_id = user_info[0]
+    user_info = utility.general_query("SELECT country, balance, id, equipped_weapon, health FROM profiles WHERE username = ?;", [user])
+    user_country, user_balance, user_id, weapon, health = user_info[0]
 
     all_fish_owned = utility.general_query("SELECT common_name, number_owned FROM fish WHERE owner = ?;", [user_id])
     all_weapons_owned = utility.general_query("SELECT name, durability FROM weapons WHERE owner = ?;", [user_id])
 
-    return render_template('profile.html', current_user=user, country=user_country, balance=user_balance, all_fish=all_fish_owned, all_weapons=all_weapons_owned)
+    return render_template('profile.html', current_user=user, country=user_country, balance=user_balance, all_fish=all_fish_owned, all_weapons=all_weapons_owned, user_weapon = weapon, user_health = health)
 
 # Display possible travel locations
 @app.get('/travel')
