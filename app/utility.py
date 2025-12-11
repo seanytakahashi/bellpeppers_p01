@@ -75,7 +75,7 @@ def find_area(polygon):
             sum2 += (float(pair1[1])*float(pair2[0]))
     sum1 += (float(pair1[0])*float(firstpair[1]))
     sum2 += (float(pair1[1])*float(firstpair[0]))
-    return (0.5 * abs(sum1-sum2))
+    return (int)(0.5 * abs(sum1-sum2))
 
 # insert_query("profiles", {"username": "Testing", "password": "Testing"})
 # print(general_query("SELECT * FROM profiles WHERE username=?", ["Testing"]))
