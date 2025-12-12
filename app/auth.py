@@ -19,6 +19,11 @@ def signup_get():
 def signup_post():
     username = request.form.get('username')
     password = request.form.get('password')
+
+    if not password or not username:
+        flash('Error: Username or password cannot be empty!', 'danger')
+        return redirect(url_for('auth.signup_get'))
+
     #check if username exist
     row = utility.general_query("SELECT username FROM profiles WHERE username = ?", [username])
     if not row:

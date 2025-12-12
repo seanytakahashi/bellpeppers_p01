@@ -34,6 +34,7 @@
       <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}} <button type="submit" class="btn btn-primary">Equip</button></li>
     {% else %}
       <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}}</li>
+    {% endif %}
   {% endfor %}
 {% else %}
   <p>No weapons owned</p>
