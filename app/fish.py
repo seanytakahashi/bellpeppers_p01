@@ -15,13 +15,13 @@ def get_fish():
         ("sort", "/species@cn asc;/species@sn asc"),
         ("filter", "/species@cn not like '%no common name%'"),
         ("filter", "/species@cn not like '%unnamed%'"),
-        ("filter", "/species@status not in ('Experimental Population, Non-Essential')"),
         ("filter", "/species@range_envelope is not null"),
         ("filter", "/species@gn != 'Algae'"),
         ("filter", "/species@gn != 'Conifers and Cycads'"),
         ("filter", "/species@gn != 'Ferns and Allies'"),
         ("filter", "/species@gn != 'Flowering Plants'"),
-        ("filter", "/species@gn != 'Lichens'")
+        ("filter", "/species@gn != 'Lichens'"),
+        ("filter", "/species@status in ('Resolved Taxon','Species of Concern','Threatened','Endangered','Extinction')")
     ])["data"]
     # x = 0
     for fish in fishSet:
@@ -31,7 +31,7 @@ def get_fish():
         except:
             print(fish[0])
             print(fish[3])
-    # print(x)
+    print(x)
     return random.choice(fishSet)
 
 # print(get_fish())
