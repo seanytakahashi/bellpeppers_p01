@@ -31,6 +31,12 @@ def profile_get():
 
     return render_template('profile.html', current_user=user, country=user_country, balance=user_balance, all_fish=all_fish_owned, all_weapons=all_weapons_owned, user_weapon = weapon, user_health = health)
 
+@app.post('/profile')
+def profile_post():
+    weapon_equip = request.form.get('Equip')
+    user = session['username']
+    utility.general_query("UPDATE profiles SET equipped_weapon WHERE username = ?", [weapon_equip, user])
+
 # Display possible travel locations
 @app.get('/travel')
 def travel_get():

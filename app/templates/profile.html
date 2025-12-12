@@ -31,7 +31,7 @@
   {% for weapons in all_weapons %}
   <!-- Have equipped status and equip button for non-equipped weapons-->
     {% if weapons == user_weapon %}
-      <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}} <button type="submit" class="btn btn-primary">Equip</button></li>
+      <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}} <button type="submit" value=f"{weapons.common_name}" class="btn btn-primary">Equip</button></li>
     {% else %}
       <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}}</li>
     {% endif %}
