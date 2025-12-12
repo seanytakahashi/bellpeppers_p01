@@ -31,6 +31,13 @@
       <div class="card-body">
         <h5 class="card-title">{{ fish["common_name"] }}</h5>
         <p class="card-text">{{ fish["scientific_name"] }}</p>
+        <p class="card-text">{{ fish["status"] }}</p>
+        <p class="card-text mb-1">Health</p>
+        <div class="progress mb-3">
+          <div class="progress-bar bg-success" role="progressbar" style="width:70%">
+            70%
+          </div>
+        </div>
         <a href="#" class="btn btn-primary">Go somewhere</a>
       </div>
     </div>

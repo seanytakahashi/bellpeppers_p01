@@ -45,10 +45,11 @@ def get_fish_stats(status):
             "damage": "1d8",
         },
         "Extinction": {
-            "health": 30
+            "health": 30,
             "damage": "2d10"
         }
     }
+    return stats[status]
 
 def parse_fish():
     raw = get_fish()
@@ -62,13 +63,14 @@ def parse_fish():
     cache_entry("fish", fish)
     return fish
 
-
-
-
 @bp.get('/')
 def battle_get():
     weapon = get_random_weapon()
     fish = parse_fish()
+
+    fish["stats"] = get_fish_stats(fish["status"])
+    fish["stats"]["accuracy"] = fish["range"]
+    del fish["range"]
 
     print(weapon)
     print(fish)

@@ -31,7 +31,6 @@ def get_fish():
         except:
             print(fish[0])
             print(fish[3])
-    print(x)
     return random.choice(fishSet)
 
 # print(get_fish())
