@@ -24,8 +24,31 @@ def get_random_weapon():
     }
 
     cache_entry("weapons", weapon)
-
     return weapon
+
+def get_fish_stats(status):
+    stats = {
+        "Resolved Taxon": {
+            "health": 5,
+            "damage": "1d4",
+        },
+        "Species of Concern": {
+            "health": 8,
+            "damage": "1d4",
+        },
+        "Threatened": {
+            "health": 10,
+            "damage": "1d4",
+        },
+        "Endangered": {
+            "health": 10,
+            "damage": "1d8",
+        },
+        "Extinction": {
+            "health": 30
+            "damage": "2d10"
+        }
+    }
 
 def parse_fish():
     raw = get_fish()
@@ -38,6 +61,9 @@ def parse_fish():
     }
     cache_entry("fish", fish)
     return fish
+
+
+
 
 @bp.get('/')
 def battle_get():
