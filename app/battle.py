@@ -13,10 +13,21 @@ bp = Blueprint('battle', __name__, url_prefix='/battle')
 
 def get_random_weapon():
     all_weapons = call_api("Dnd", "/api/2014/equipment-categories/simple-weapons")["equipment"]
-    weapon = call_api("Dnd", random.choice(all_weapons)["url"])
+    raw = call_api("Dnd", random.choice(all_weapons)["url"])
+
+    weapon = {
+        "name": raw["name"],
+        "damage_dice": raw["damage"]["damage_dice"],
+        "damage_type": raw["damage"]["damage_type"]["name"],
+        "max_durability": raw["weight"] * 10,
+        "range": raw["range"]["normal"]
+    }
+
+    cache_entry("weapons", weapon)
+
     return weapon
 
-def convert_fish():
+def parse_fish():
     raw = get_fish()
     fish = {
         "scientific_name": raw[1]["value"],
@@ -31,7 +42,7 @@ def convert_fish():
 @bp.get('/')
 def battle_get():
     weapon = get_random_weapon()
-    fish = convert_fish()
+    fish = parse_fish()
 
     print(weapon)
     print(fish)

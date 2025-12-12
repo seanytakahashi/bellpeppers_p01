@@ -16,10 +16,10 @@ CREATE TABLE fish (
 );""")
 
 c.executescript("""
-DROP TABLE IF EXISTS entries;
+DROP TABLE IF EXISTS weapons;
 CREATE TABLE weapons (
     name TEXT UNIQUE PRIMARY KEY,
-    damage_dice INTEGER,
+    damage_dice STRING,
     damage_type TEXT,
     max_durability INTEGER,
     range INTEGER
