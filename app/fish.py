@@ -10,10 +10,18 @@ import random
 def get_fish():
     fishSet = utility.call_api("Species", "/export", [
         ("format", "json"),
+        ("distinct", "true"),
         ("columns", "/species@cn,sn,status,range_envelope,gn"),
         ("sort", "/species@cn asc;/species@sn asc"),
+        ("filter", "/species@cn not like '%no common name%'"),
+        ("filter", "/species@cn not like '%unnamed%'"),
         ("filter", "/species@status not in ('Experimental Population, Non-Essential')"),
-        ("filter", "/species@range_envelope is not null")
+        ("filter", "/species@range_envelope is not null"),
+        ("filter", "/species@gn != 'Algae'"),
+        ("filter", "/species@gn != 'Conifers and Cycads'"),
+        ("filter", "/species@gn != 'Ferns and Allies'"),
+        ("filter", "/species@gn != 'Flowering Plants'"),
+        ("filter", "/species@gn != 'Lichens'")
     ])["data"]
     # x = 0
     for fish in fishSet:
@@ -23,5 +31,7 @@ def get_fish():
         except:
             print(fish[0])
             print(fish[3])
-    # print(x)
+    print(x)
     return random.choice(fishSet)
+
+# print(get_fish())
