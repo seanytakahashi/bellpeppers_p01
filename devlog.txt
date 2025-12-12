@@ -88,3 +88,6 @@ ivanC -- 2025-10-11 10:59
 seanT -- 2025-10-11 10:59
 - Updated db and profiles page to include health
 - Started working on equip weapons
+
+evissW -- 2025-10-12 11:00
+- Started working on frontend of traveling
