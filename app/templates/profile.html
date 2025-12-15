@@ -18,9 +18,9 @@
 <p>Equipped Weapon: <strong>{{ user["equipped_weapon"] }}</strong></p>
 
 <h3>Fish Owned</h3>
-{% if all_fish %}
-  {% for fish in all_fish %}
-    <li><strong>{{fish.common_name}}:</strong> {{fish.number_owned}}</li>
+{% if all_fish_owned %}
+  {% for fish in all_fish_owned %}
+    <li><strong>{{fish["common_name"]}}:</strong> {{fish["number_owned"]}}</li>
   {% endfor %}
 {% else %}
   <p>No fish owned</p>
@@ -29,13 +29,13 @@
 
 <h3>Weapons Owned</h3>
 <!-- THIS IS BROKEN -->
-{% if all_weapons %}
-  {% for weapons in all_weapons %}
+{% if all_weapons_owned %}
+  {% for weapons in all_weapons_owned %}
   <!-- Have equipped status and equip button for non-equipped weapons-->
     {% if weapons == user["equipped_weapon"] %}
-      <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}} <button type="submit" value=f"{{weapons.common_name}}" class="btn btn-primary">Equip</button></li>
+      <li><strong>{{weapons["name"]}}:</strong> Own {{weapons["number_owned"]}}; Durability {{weapons["durability"]}} <button type="submit" value=f"{{weapons.common_name}}" class="btn btn-primary">Equip</button></li>
     {% else %}
-      <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}}</li>
+      <li><strong>{{weapons["name"]}}:</strong> {{weapons["number_owned"]}}; Durability {{weapons["durability"]}}</li>
     {% endif %}
   {% endfor %}
 {% else %}
