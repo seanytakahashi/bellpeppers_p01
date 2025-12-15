@@ -92,7 +92,19 @@ seanT -- 2025-10-11 10:59
 evissW -- 2025-10-12 11:00
 - Started working on frontend of traveling
 
-jamesL -- 2025-14-12 20:31
+jamesL -- 2025-12-14 20:31
 - Added testing route to give user a weapon
 - Added general functions to pull from cache and get user information
 - Displayed more info in battle page
+
+seanT -- 2025-12-15 11:00
+- Fixing profile inventory display
+
+jamesL -- 2025-12-15 11:00
+- Battle functionality development
+
+ivanC -- 2025-12-15 11:00
+- Testing for SQL injections, fish functionality
+
+evissW -- 2025-12-15 11:00
+- Building travel HTML template
