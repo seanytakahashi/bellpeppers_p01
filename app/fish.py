@@ -65,6 +65,7 @@ def catch_weapon_get():
     # Should only go into inventory; Goes directly to equipped for testing
     utility.general_query("UPDATE profiles SET equipped_weapon=? WHERE username=?", [weapon['name'], session["username"]])
     utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
+    utility.general_query("UPDATE weapons SET number_owned = number_owned + 1 WHERE owner=?", [user["id"]])
     return redirect(url_for('profile_get'))
 
 # print(get_fish())
