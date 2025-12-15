@@ -37,7 +37,11 @@
           Damage: {{ weapon['damage_dice'] }}<br>
           Accuracy: {{ weapon['accuracy'] }}<br>
         </p>
-        <a href="#" class="btn btn-primary">Attack!</a>
+        <form action="{{ url_for('battle.battle_post') }}" method="POST">
+          <input type="hidden" name="fish_health" value="{{ fish['stats']['health'] }}">
+          <input type="hidden" name="fish_species" value="{{ fish['scientific_name'] }}">
+          <button type="submit" class="btn btn-primary">Attack!</button>
+        </form>
       </div>
     </div>
   </div>

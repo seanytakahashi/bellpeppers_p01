@@ -32,8 +32,6 @@ def get_fish():
     for fish in fishSet:
         # x += 1
         try:
-            if fish[4] not in species_list:
-                species_list.append(fish[4])
             fish[3] = utility.find_area(fish[3][9:-2])
         except:
             print(fish[0])
