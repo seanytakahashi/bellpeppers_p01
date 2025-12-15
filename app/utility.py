@@ -22,7 +22,7 @@ def dictify(raw, c):
     for row in raw:
         d = dict()
         for col in range(len(row)):
-            d.update({c.description[col][0]: row[col]}) 
+            d.update({c.description[col][0]: row[col]})
         output.append(d)
     return output
 
@@ -66,7 +66,7 @@ def general_query(query_string, params=()):
 
 def get_user(name):
     user = general_query(f"SELECT * FROM profiles WHERE username=?", [name])
-    return user[0] or None
+    return None if len(user) == 0 else user[0]
 
 # params: [("key", value)]
 def call_api(api_name, path, params=[]):
