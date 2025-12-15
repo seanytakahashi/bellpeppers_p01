@@ -32,6 +32,8 @@ def get_fish():
     for fish in fishSet:
         # x += 1
         try:
+            if fish[4] not in species_list:
+                species_list.append(fish[4])
             fish[3] = utility.find_area(fish[3][9:-2])
         except:
             print(fish[0])
@@ -47,14 +49,15 @@ def get_fish():
     utility.cache_entry("fish", fish)
     return fish
 
-# @bp.get("/")
-# def fish():
-#     chance = random.randint(1, 100)
-#     if (randint > 90): # treasure chance: ~10%
-#         print("treasure caught. debug console message for now")
-#         return "you found treasure"
-#     else # call the database, then send the result to battle
-#         fish = get_fish
+@bp.get("/")
+def fish():
+    chance = random.randint(1, 100)
+    if (chance > 90): # treasure chance: ~10%
+        print("treasure caught. debug console message for now")
+        return "you found treasure"
+    else: # call the database, then send the result to battle
+        fish = get_fish()
+        return redirect(url_for('battle.battle_get', fish=fish["scientific_name"]))
 
 
 # TESTING
