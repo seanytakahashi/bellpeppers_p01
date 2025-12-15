@@ -5,9 +5,10 @@
 # 2025-12-22m
 
 import utility
-import random
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 import battle
+import random
+import time
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 
 bp = Blueprint('fish', __name__, url_prefix='/fish')
 
@@ -35,7 +36,26 @@ def get_fish():
         except:
             print(fish[0])
             print(fish[3])
-    return random.choice(fishSet)
+    raw = random.choice(fishSet)
+    fish = {
+        "scientific_name": raw[1]["value"],
+        "common_name": raw[0],
+        "status": raw[2],
+        "range": raw[3],
+        "type": raw[4]
+    }
+    utility.cache_entry("fish", fish)
+    return fish
+
+# @bp.get("/")
+# def fish():
+#     chance = random.randint(1, 100)
+#     if (randint > 90): # treasure chance: ~10%
+#         print("treasure caught. debug console message for now")
+#         return "you found treasure"
+#     else # call the database, then send the result to battle
+#         fish = get_fish
+
 
 # TESTING
 @bp.get("catch_weapon")

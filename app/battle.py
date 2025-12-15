@@ -53,14 +53,6 @@ def get_fish_stats(status):
 
 def parse_fish():
     raw = get_fish()
-    fish = {
-        "scientific_name": raw[1]["value"],
-        "common_name": raw[0],
-        "status": raw[2],
-        "range": raw[3],
-        "type": raw[4]
-    }
-    cache_entry("fish", fish)
     fish["stats"] = get_fish_stats(fish["status"])
     fish["stats"]["accuracy"] = fish["range"]
     del fish["range"]
