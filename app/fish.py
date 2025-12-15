@@ -6,6 +6,10 @@
 
 import utility
 import random
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+import battle
+
+bp = Blueprint('fish', __name__, url_prefix='/fish')
 
 def get_fish():
     fishSet = utility.call_api("Species", "/export", [
@@ -32,5 +36,15 @@ def get_fish():
             print(fish[0])
             print(fish[3])
     return random.choice(fishSet)
+
+# TESTING
+@bp.get("catch_weapon")
+def catch_weapon_get():
+    weapon = battle.get_random_weapon()
+    user = utility.get_user(session["username"])
+    # Should only go into inventory; Goes directly to equipped for testing
+    utility.general_query("UPDATE profiles SET equipped_weapon=? WHERE username=?", [weapon['name'], session["username"]])
+    utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
+    return redirect(url_for('profile_get'))
 
 # print(get_fish())

@@ -17,6 +17,15 @@ db = sqlite3.connect(DB_FILE, check_same_thread=False)
 CACHE_FILE = "cache.db"
 cache = sqlite3.connect(CACHE_FILE, check_same_thread=False)
 
+def dictify(raw, c):
+    output = []
+    for row in raw:
+        d = dict()
+        for col in range(len(row)):
+            d.update({c.description[col][0]: row[col]}) 
+        output.append(d)
+    return output
+
 # data: {"keys", value}
 # FIRST KEY VALUE PAIR MUST BE PRIMARY KEY
 def cache_entry(table, data):
@@ -25,6 +34,16 @@ def cache_entry(table, data):
     if c.fetchone() is None:
         placeholder = ["?"] * len(data)
         c.execute(f"INSERT INTO {table} {tuple(data.keys())} VALUES ({', '.join(placeholder)});", tuple(data.values()))
+    c.close()
+    cache.commit()
+
+# query: ("key", value)
+def pull_cache(table, query):
+    c = cache.cursor()
+    c.execute(f"SELECT * FROM {table} WHERE {query[0]}=?", [query[1]])
+    output = dictify(c.fetchall(), c)[0] or None
+    c.close()
+    return output
 
 # data: "key": value}
 def insert_query(table, data):
@@ -35,13 +54,19 @@ def insert_query(table, data):
     db.commit()
 
 # params: [val1, val2]
+# returns [{'key1': val1}]
 def general_query(query_string, params=()):
     c = db.cursor()
     c.execute(query_string, params)
-    output = c.fetchall()
+    raw = c.fetchall()
+    output = dictify(raw, c)
     c.close()
     db.commit()
     return output
+
+def get_user(name):
+    user = general_query(f"SELECT * FROM profiles WHERE username=?", [name])
+    return user[0] or None
 
 # params: [("key", value)]
 def call_api(api_name, path, params=[]):
@@ -78,7 +103,7 @@ def find_area(polygon):
     return (int)(0.5 * abs(sum1-sum2))
 
 # insert_query("profiles", {"username": "Testing", "password": "Testing"})
-# print(general_query("SELECT * FROM profiles WHERE username=?", ["Testing"]))
+# print(general_query("SELECT * FROM profiles WHERE username=?", ["test"]))
 # print(call_api("Dnd", "/equipment-categories/simple-weapons")["index"])
 
 # print(call_api("Species", "/export", {

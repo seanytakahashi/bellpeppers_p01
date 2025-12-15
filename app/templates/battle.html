@@ -13,32 +13,60 @@
 <h1 class="text-center pb-4">Battle</h1>
 <div class="row justify-content-between">
   <div class="col-5">
-    <div class="card">
+    <div class="card mb-3">
       <div class="card-body">
         <h5 class="card-title">Player</h5>
         <p class="card-text mb-1">Health</p>
         <div class="progress mb-3">
-          <div class="progress-bar bg-success" role="progressbar" style="width:70%">
-            70%
+          <div class="progress-bar bg-success w-{{ user['health'] }}" role="progressbar">
+            {{ user['health'] }} / 100
           </div>
         </div>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{ weapon["name"] }}</h5>
+        <p class="card-text mb-2">
+          Durability
+          <div class="progress mb-3">
+            <div class="progress-bar bg-success" style="width: {{ weapon['durability'] / weapon['max_durability'] * 100 }}%">
+              {{ weapon['durability'] }} / {{ weapon['max_durability'] }}
+            </div>
+          </div>
+          Damage: {{ weapon['damage_dice'] }}<br>
+          Accuracy: {{ weapon['accuracy'] }}<br>
+        </p>
+        <a href="#" class="btn btn-primary">Attack!</a>
       </div>
     </div>
   </div>
+  <div class="col-2 text-center my-auto">
+    <h3>VS</h3>
+  </div>
   <div class="col-5">
-    <div class="card">
+    <div class="card mb-3">
       <div class="card-body">
         <h5 class="card-title">{{ fish["common_name"] }}</h5>
-        <p class="card-text">{{ fish["scientific_name"] }}</p>
-        <p class="card-text">{{ fish["status"] }}</p>
+        <p class="card-text">
+          {{ fish["scientific_name"] }}<br>
+          {{ fish["status"] }}
+        </p>
         <p class="card-text mb-1">Health</p>
         <div class="progress mb-3">
-          <div class="progress-bar bg-success" role="progressbar" style="width:70%">
-            70%
+          <div class="progress-bar bg-success" style="width: {{ fish['stats']['health'] / fish['stats']['max_health'] * 100 }}%">
+            {{ fish['stats']['health'] }} / {{ fish['stats']['max_health'] }}
           </div>
         </div>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Stats</h5>
+        <p class="card-text">
+          Damage: {{ fish["stats"]["damage"] }}<br>
+          Accuracy: {{ fish["stats"]["accuracy"] }}<br>
+        </p>
       </div>
     </div>
   </div>

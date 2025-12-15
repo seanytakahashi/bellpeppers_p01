@@ -15,6 +15,8 @@ import auth
 app.register_blueprint(auth.bp)
 import battle
 app.register_blueprint(battle.bp)
+import fish
+app.register_blueprint(fish.bp)
 
 @app.get('/')
 def home_get():
@@ -22,20 +24,19 @@ def home_get():
 
 @app.get('/profile')
 def profile_get():
-    user = session['username']
-    user_info = utility.general_query("SELECT country, balance, id, equipped_weapon, health FROM profiles WHERE username = ?;", [user])
-    user_country, user_balance, user_id, weapon, health = user_info[0]
+    user = utility.get_user(session["username"])
 
-    all_fish_owned = utility.general_query("SELECT common_name, number_owned FROM fish WHERE owner = ?;", [user_id])
-    all_weapons_owned = utility.general_query("SELECT name, durability FROM weapons WHERE owner = ?;", [user_id])
+    all_fish_owned = utility.general_query("SELECT common_name, number_owned FROM fish WHERE owner=?;", [user["id"]])
+    all_weapons_owned = utility.general_query("SELECT name, durability FROM weapons WHERE owner=?;", [user["id"]])
+    print(all_weapons_owned)
 
-    return render_template('profile.html', current_user=user, country=user_country, balance=user_balance, all_fish=all_fish_owned, all_weapons=all_weapons_owned, user_weapon = weapon, user_health = health)
+    return render_template('profile.html', user=user, all_fish_owned=all_fish_owned, all_weapons_owned=all_weapons_owned)
 
 @app.post('/profile')
 def profile_post():
     weapon_equip = request.form.get('Equip')
     user = session['username']
-    utility.general_query("UPDATE profiles SET equipped_weapon WHERE username = ?", [weapon_equip, user])
+    utility.general_query("UPDATE profiles SET equipped_weapon=? WHERE username=?", [weapon_equip, user])
 
 # Display possible travel locations
 @app.get('/travel')

@@ -5,7 +5,7 @@
 # 2025-12-22m
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from utility import call_api, cache_entry
+from utility import *
 from fish import get_fish
 import random
 
@@ -29,23 +29,23 @@ def get_random_weapon():
 def get_fish_stats(status):
     stats = {
         "Resolved Taxon": {
-            "health": 5,
+            "max_health": 5,
             "damage": "1d4",
         },
         "Species of Concern": {
-            "health": 8,
+            "max_health": 8,
             "damage": "1d4",
         },
         "Threatened": {
-            "health": 10,
+            "max_health": 10,
             "damage": "1d4",
         },
         "Endangered": {
-            "health": 10,
+            "max_health": 10,
             "damage": "1d8",
         },
         "Extinction": {
-            "health": 30,
+            "max_health": 30,
             "damage": "2d10"
         }
     }
@@ -61,20 +61,33 @@ def parse_fish():
         "type": raw[4]
     }
     cache_entry("fish", fish)
-    return fish
-
-@bp.get('/')
-def battle_get():
-    weapon = get_random_weapon()
-    fish = parse_fish()
-
     fish["stats"] = get_fish_stats(fish["status"])
     fish["stats"]["accuracy"] = fish["range"]
     del fish["range"]
+    fish["stats"]["health"] = fish["stats"]["max_health"] - 2
+    return fish
 
-    print(weapon)
-    print(fish)
+def parse_weapon(name, user):
+    item = general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [name, user])[0]
+    weapon = pull_cache("weapons", ("name", name))
+    weapon["durability"] = item['durability']
+    weapon["accuracy"] = weapon["range"] * 10
+    del weapon["range"]
+    return weapon
 
-    return render_template("battle.html", fish=fish, weapon=weapon)
+@bp.get('/')
+def battle_get():
+    fish = parse_fish()
+    user = get_user(session['username'])
+    weapon = parse_weapon(user['equipped_weapon'], user["id"])
+
+    return render_template("battle.html", fish=fish, weapon=weapon, user=user)
+
+@bp.post('/')
+def battle_post():
+    fish = parse_fish()
+    user = get_user(session['username'])
+    weapon = parse_weapon(user['equipped_weapon'], user["id"])
+    return render_template("battle.html", fish=fish, weapon=weapon, user=user)
 
 # print(get_random_weapon())

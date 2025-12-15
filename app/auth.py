@@ -25,7 +25,8 @@ def signup_post():
         return redirect(url_for('auth.signup_get'))
 
     #check if username exist
-    row = utility.general_query("SELECT username FROM profiles WHERE username = ?", [username])
+    row = utility.get_user(username)
+
     if not row:
         hashed_pswd = generate_password_hash(password)
         utility.insert_query("profiles", ({"username": username, "password": hashed_pswd}))
@@ -51,12 +52,12 @@ def login_post():
     password = request.form.get('password')
 
     # check for username and pswd
-    row = utility.general_query("SELECT password FROM profiles WHERE username = ?", [username])
+    row = utility.get_user(username)
 
     if not row:
         flash('Error: Username or password incorrect', 'danger')
         return redirect(url_for('auth.login_get'))
-    elif check_password_hash(row[0][0], password):
+    elif check_password_hash(row["password"], password):
         flash('Login successful!', 'success')
         session['username'] = username
         return redirect(url_for('profile_get'))

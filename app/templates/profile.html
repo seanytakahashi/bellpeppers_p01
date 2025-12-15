@@ -10,11 +10,12 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
 
-<p>Welcome, <strong>{{ current_user }}</strong>!</p>
+<p>Welcome, <strong>{{ session["username"] }}</strong>!</p>
 
-<p>Current health: <strong>{{ user_health }}</strong></p>
-<p>Current country: <strong>{{ country }}</strong></p>
-<p>Current balance: <strong>{{ balance }}</strong></p>
+<p>Current health: <strong>{{ user["health"] }}</strong></p>
+<p>Current country: <strong>{{ user["country"] }}</strong></p>
+<p>Current balance: <strong>{{ user["balance"] }}</strong></p>
+<p>Equipped Weapon: <strong>{{ user["equipped_weapon"] }}</strong></p>
 
 <h3>Fish Owned</h3>
 {% if all_fish %}
@@ -27,11 +28,12 @@
 
 
 <h3>Weapons Owned</h3>
+<!-- THIS IS BROKEN -->
 {% if all_weapons %}
   {% for weapons in all_weapons %}
   <!-- Have equipped status and equip button for non-equipped weapons-->
-    {% if weapons == user_weapon %}
-      <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}} <button type="submit" value=f"{weapons.common_name}" class="btn btn-primary">Equip</button></li>
+    {% if weapons == user["equipped_weapon"] %}
+      <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}} <button type="submit" value=f"{{weapons.common_name}}" class="btn btn-primary">Equip</button></li>
     {% else %}
       <li><strong>{{weapons.common_name}}:</strong> {{weapons.number_owned}}</li>
     {% endif %}
