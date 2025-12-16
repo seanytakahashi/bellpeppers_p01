@@ -20,7 +20,7 @@
 <h3>Fish Owned</h3>
 {% if all_fish_owned %}
   {% for fish in all_fish_owned %}
-    <li><strong>{{fish["common_name"]}}:</strong> {{fish["number_owned"]}}</li>
+    <li><strong>{{fish["scientific_name"]}}:</strong> {{fish["number_owned"]}}</li>
   {% endfor %}
 {% else %}
   <p>No fish owned</p>

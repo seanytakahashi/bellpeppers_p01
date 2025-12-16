@@ -32,9 +32,8 @@ def home_get():
 def profile_get():
     user = utility.get_user(session["username"])
 
-    all_fish_owned = utility.general_query("SELECT common_name, number_owned FROM fish WHERE owner=?;", [user["id"]])
-    all_weapons_owned = utility.general_query("SELECT name, durability FROM weapons WHERE owner=?;", [user["id"]])
-    print(all_weapons_owned)
+    all_fish_owned = utility.general_query("SELECT scientific_name, number_owned FROM fish WHERE owner=?;", [user["id"]])
+    all_weapons_owned = utility.general_query("SELECT name, number_owned, durability FROM weapons WHERE owner=?;", [user["id"]])
 
     return render_template('profile.html', user=user, all_fish_owned=all_fish_owned, all_weapons_owned=all_weapons_owned)
 

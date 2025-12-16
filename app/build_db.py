@@ -21,10 +21,9 @@ c.executescript("""
 DROP TABLE IF EXISTS fish;
 CREATE TABLE fish (
     scientific_name TEXT,
-    common_name TEXT,
     owner INTEGER,
-    number_caught INTEGER,
-    number_owned INTEGER,
+    number_caught INTEGER DEFAULT 1,
+    number_owned INTEGER DEFAULT 1,
     FOREIGN KEY (owner) REFERENCES profiles(id)
 );""")
 
@@ -33,11 +32,7 @@ DROP TABLE IF EXISTS weapons;
 CREATE TABLE weapons (
     name TEXT,
     owner INTEGER,
-<<<<<<< Updated upstream
     number_owned INTEGER DEFAULT 1,
-=======
-    number_owned INTEGER DEFAULT 0,
->>>>>>> Stashed changes
     durability INTEGER,
     FOREIGN KEY (owner) REFERENCES profiles(id)
 );""")

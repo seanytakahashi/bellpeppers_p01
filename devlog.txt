@@ -108,3 +108,6 @@ ivanC -- 2025-12-15 11:00
 
 evissW -- 2025-12-15 11:00
 - Building travel HTML template
+
+jamesL -- 2025-12-16 18:12
+- Added attacks and victory to battle system

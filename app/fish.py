@@ -48,7 +48,7 @@ def get_fish():
     return fish
 
 @bp.get("/")
-def fish():
+def fish_get():
     chance = random.randint(1, 100)
     print(chance)
     if (chance > 85): # treasure chance: ~15%
@@ -70,12 +70,15 @@ def fish():
 def catch_weapon_get():
     weapon = battle.get_random_weapon()
     user = utility.get_user(session["username"])
+    
     # Should only go into inventory; Goes directly to equipped for testing
     # CHANGE TO MATCH GENERAL QUERY FUNCTION RETURN TYPE OR MAKE NEW FUNC
+
     utility.general_query("UPDATE profiles SET equipped_weapon=? WHERE username=?", [weapon['name'], session["username"]])
-    result = utility.general_query("SELECT * FROM weapons WHERE EXISTS (SELECT 1 FROM weapons WHERE owner=?);", [weapon['name']])
-    if result:
-        utility.general_query("UPDATE weapons SET number_owned = number_owned + 1 WHERE owner=?", [user['id']])
+    result = utility.general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [weapon['name'], user["id"]])
+
+    if len(result) != 0:
+        utility.general_query("UPDATE weapons SET number_owned=number_owned+1 WHERE name=? AND owner=?", [weapon["name"], user['id']])
     else:
         utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
 

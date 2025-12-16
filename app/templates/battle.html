@@ -18,7 +18,7 @@
         <h5 class="card-title">Player</h5>
         <p class="card-text mb-1">Health</p>
         <div class="progress mb-3">
-          <div class="progress-bar bg-success w-{{ user['health'] }}" role="progressbar">
+          <div class="progress-bar bg-success" style="width: {{ user['health'] }}%" role="progressbar">
             {{ user['health'] }} / 100
           </div>
         </div>

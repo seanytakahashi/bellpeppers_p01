@@ -10,8 +10,8 @@ def get_pop(key):
     pop = data[0]['maps']['population']
     return pop
 
-def get_list():
-    country = get_user(session["username"])
+def get_list(username):
+    country = utility.get_user(username)
     data = utility.call_api("Countries", "/" + country)
     list = data[0]['borders']
     return list
@@ -19,13 +19,13 @@ def get_list():
 def get_common_list():
     list = []
     for country in get_list():
-        list.append(get_common(country));
+        list.append(get_common(country))
     return list
 
 def get_pop_list():
     list = []
     for country in get_list():
-        list.append(get_pop_list(country));
+        list.append(get_pop_list(country))
     return list
 
 def make_numbers(p):
@@ -41,5 +41,5 @@ def make_numbers(p):
 def get_chance_list():
     list = []
     for pop in get_pop_list():
-        list.append(make_numbers(pop));
+        list.append(make_numbers(pop))
     return list
