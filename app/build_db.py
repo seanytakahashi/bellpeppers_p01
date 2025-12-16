@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS weapons;
 CREATE TABLE weapons (
     name TEXT,
     owner INTEGER,
-    number_owned INTEGER,
+    number_owned INTEGER DEFAULT 1,
     durability INTEGER,
     FOREIGN KEY (owner) REFERENCES profiles(id)
 );""")

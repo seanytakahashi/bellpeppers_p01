@@ -65,9 +65,14 @@ def catch_weapon_get():
     weapon = battle.get_random_weapon()
     user = utility.get_user(session["username"])
     # Should only go into inventory; Goes directly to equipped for testing
+    # CHANGE TO MATCH GENERAL QUERY FUNCTION RETURN TYPE OR MAKE NEW FUNC
     utility.general_query("UPDATE profiles SET equipped_weapon=? WHERE username=?", [weapon['name'], session["username"]])
-    utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
-    utility.general_query("UPDATE weapons SET number_owned = number_owned + 1 WHERE owner=?", [user["id"]])
+    result = utility.general_query("SELECT * FROM weapons WHERE EXISTS (SELECT 1 FROM weapons WHERE owner=?);", [weapon['name']])
+    if result:
+        utility.general_query("UPDATE weapons SET number_owned = number_owned + 1 WHERE owner=?", [user['id']])
+    else:
+        utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
+
     flash(f"You caught a {weapon['name']}!", "success")
     return redirect(url_for('profile_get'))
 
