@@ -50,9 +50,10 @@ def get_fish():
 @bp.get("/")
 def fish():
     chance = random.randint(1, 100)
+    print(chance)
     if (chance > 90): # treasure chance: ~10%
         print("treasure caught. debug console message for now")
-        return "you found treasure"
+        return redirect(url_for("fish.catch_weapon_get"))
     else: # call the database, then send the result to battle
         fish = get_fish()
         return redirect(url_for('battle.battle_get', fish=fish["scientific_name"]))
@@ -67,6 +68,7 @@ def catch_weapon_get():
     utility.general_query("UPDATE profiles SET equipped_weapon=? WHERE username=?", [weapon['name'], session["username"]])
     utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
     utility.general_query("UPDATE weapons SET number_owned = number_owned + 1 WHERE owner=?", [user["id"]])
+    flash(f"You caught a {weapon['name']}!", "success")
     return redirect(url_for('profile_get'))
 
 # print(get_fish())
