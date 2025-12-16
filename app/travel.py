@@ -42,7 +42,7 @@ def make_numbers(p):
     nums = []
     current = p
 
-    for times in range(15):
+    for times in range(13):
         current = (current * 1103515245 + 12345) % 2**31
         nums.append((current % 1000000) / 1000000)
     total = sum(nums)
