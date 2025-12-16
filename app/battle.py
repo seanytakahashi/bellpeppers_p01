@@ -19,7 +19,7 @@ def get_random_weapon():
         "name": raw["name"],
         "damage_dice": raw["damage"]["damage_dice"],
         "damage_type": raw["damage"]["damage_type"]["name"],
-        "max_durability": min(raw["weight"], 1) * 10,
+        "max_durability": max(raw["weight"], 1) * 10,
         "range": raw["range"]["normal"]
     }
 
@@ -74,13 +74,9 @@ def battle_get():
 
     if (user['equipped_weapon'] == None):
         flash("You don't have a weapon equipped and you fled the battle!", "danger")
-        return url_for("profile_get")
-    print(user)
+        return redirect(url_for("profile_get"))
 
     weapon = parse_weapon(user['equipped_weapon'], user["id"])
-
-    print(weapon)
-    print(user)
 
     return render_template("battle.html", fish=fish, weapon=weapon, user=user)
 
