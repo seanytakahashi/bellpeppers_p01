@@ -18,6 +18,12 @@ app.register_blueprint(battle.bp)
 import fish
 app.register_blueprint(fish.bp)
 
+@app.before_request
+def check_authentification():
+    if 'username' not in session.keys() and request.blueprint != 'auth':
+        flash("Please log in to view our website", "danger")
+        return redirect(url_for("auth.login_get"))
+
 @app.get('/')
 def home_get():
     return render_template('base.html')
