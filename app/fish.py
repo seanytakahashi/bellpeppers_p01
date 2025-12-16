@@ -51,9 +51,15 @@ def get_fish():
 def fish():
     chance = random.randint(1, 100)
     print(chance)
-    if (chance > 90): # treasure chance: ~10%
-        print("treasure caught. debug console message for now")
-        return redirect(url_for("fish.catch_weapon_get"))
+    if (chance > 85): # treasure chance: ~15%
+        print("treasure caught. debug console message")
+        if (chance > 95):
+            return redirect(url_for("fish.catch_weapon_get"))
+        else:
+            cost = random.randint(20,100)
+            utility.general_query("UPDATE profiles SET balance = balance + ? WHERE username=?", [cost, session["username"]])
+            flash(f"You caught {cost} gold!","success")
+            return redirect(url_for('profile_get'))
     else: # call the database, then send the result to battle
         fish = get_fish()
         return redirect(url_for('battle.battle_get', fish=fish["scientific_name"]))
