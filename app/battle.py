@@ -11,6 +11,13 @@ import random
 
 bp = Blueprint('battle', __name__, url_prefix='/battle')
 
+def roll_dice(dice):
+    dice = dice.split("d")
+    output = 0;
+    for i in range(int(dice[0])):
+        output += random.randint(1, int(dice[1]))
+    return output
+
 def get_random_weapon():
     all_weapons = call_api("Dnd", "/api/2014/equipment-categories/simple-weapons")["equipment"]
     raw = call_api("Dnd", random.choice(all_weapons)["url"])
@@ -55,13 +62,18 @@ def initialize_fish(fish):
     fish["stats"] = get_fish_stats(fish["status"])
     fish["stats"]["accuracy"] = fish["range"]
     del fish["range"]
-    fish["stats"]["health"] = fish["stats"]["max_health"] - 2
+    fish["stats"]["health"] = fish["stats"]["max_health"]
     return fish
 
 def parse_weapon(name, user):
     item = general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [name, user])[0]
     weapon = pull_cache("weapons", ("name", name))
+
+    print("RAW")
+    print(item)
+
     weapon["durability"] = item['durability']
+    weapon["number_owned"] = item["number_owned"]
     weapon["accuracy"] = weapon["range"] * 10
     del weapon["range"]
     return weapon
@@ -78,6 +90,10 @@ def battle_get():
 
     weapon = parse_weapon(user['equipped_weapon'], user["id"])
 
+    print(weapon)
+    print(fish)
+    print(user)
+
     return render_template("battle.html", fish=fish, weapon=weapon, user=user)
 
 @bp.post('/')
@@ -89,15 +105,28 @@ def battle_post():
     user = get_user(session['username'])
     weapon = parse_weapon(user['equipped_weapon'], user["id"])
 
+    # Decrease durability
     weapon["durability"] -= 1;
-
     if (weapon["durability"] == 0):
-        flash("Your weapon broke and you fled the battle!", "danger")
-        general_query("UPDATE profiles SET equipped_weapon=NULL WHERE id=?", [user["id"]])
-        general_query("DELETE FROM weapons WHERE name=? AND owner=?", [weapon["name"], user["id"]])
-        return redirect(url_for('profile_get'))
+        if (weapon["number_owned"] == 1):
+            flash("Your weapon broke and you fled the battle!", "danger")
+            general_query("UPDATE profiles SET equipped_weapon=NULL WHERE id=?", [user["id"]])
+            general_query("DELETE FROM weapons WHERE name=? AND owner=?", [weapon["name"], user["id"]])
+            return redirect(url_for('profile_get'))
+        else:
+            weapon["number_owned"] -= 1
+            general_query("UPDATE weapons SET number_owned=number_owned-1, durability=? WHERE name=? AND owner=?", [weapon["max_durability"], weapon["name"], user["id"]])
     else:
         general_query("UPDATE weapons SET durability=durability-1 WHERE name=? AND owner=?", [weapon["name"], user["id"]])
+
+    # Player attacks
+    damage_dice = weapon["damage_dice"]
+    damage = roll_dice(damage_dice)
+    fish["stats"]["health"] -= damage
+    if (fish["stats"]["health"]) <= 0:
+        flash("You won the battle and caught this fish!", "Success")
+        return redirect(url_for("profile_get"))
+    flash(f"You attacked for {damage} damage!", "Success")
 
 
 

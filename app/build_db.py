@@ -33,7 +33,11 @@ DROP TABLE IF EXISTS weapons;
 CREATE TABLE weapons (
     name TEXT,
     owner INTEGER,
+<<<<<<< Updated upstream
     number_owned INTEGER DEFAULT 1,
+=======
+    number_owned INTEGER DEFAULT 0,
+>>>>>>> Stashed changes
     durability INTEGER,
     FOREIGN KEY (owner) REFERENCES profiles(id)
 );""")
