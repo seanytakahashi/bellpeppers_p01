@@ -19,7 +19,7 @@ def get_random_weapon():
         "name": raw["name"],
         "damage_dice": raw["damage"]["damage_dice"],
         "damage_type": raw["damage"]["damage_type"]["name"],
-        "max_durability": raw["weight"] * 10,
+        "max_durability": min(raw["weight"], 1) * 10,
         "range": raw["range"]["normal"]
     }
 
