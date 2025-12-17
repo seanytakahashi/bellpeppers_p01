@@ -71,10 +71,7 @@ def catch_weapon_get():
     weapon = battle.get_random_weapon()
     user = utility.get_user(session["username"])
     
-    # Should only go into inventory; Goes directly to equipped for testing
-    # CHANGE TO MATCH GENERAL QUERY FUNCTION RETURN TYPE OR MAKE NEW FUNC
-
-    utility.general_query("UPDATE profiles SET equipped_weapon=? WHERE username=?", [weapon['name'], session["username"]])
+    # Adds to inventory but not auto equipped
     result = utility.general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [weapon['name'], user["id"]])
 
     if len(result) != 0:

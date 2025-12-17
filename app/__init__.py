@@ -39,9 +39,11 @@ def profile_get():
 
 @app.post('/profile')
 def profile_post():
-    weapon_equip = request.form.get('Equip')
+    weapon_equip = request.form.get('weapon')
     user = session['username']
     utility.general_query("UPDATE profiles SET equipped_weapon=? WHERE username=?", [weapon_equip, user])
+
+    return redirect(url_for('profile_get'))
 
 # Display possible travel locations
 @app.get('/travel')

@@ -28,14 +28,17 @@
 
 
 <h3>Weapons Owned</h3>
+<h6>Name(# owned): Durability</h6>
 <!-- THIS IS BROKEN -->
 {% if all_weapons_owned %}
   {% for weapons in all_weapons_owned %}
   <!-- Have equipped status and equip button for non-equipped weapons-->
-    {% if weapons == user["equipped_weapon"] %}
-      <li><strong>{{weapons["name"]}}:</strong> Own {{weapons["number_owned"]}}; Durability {{weapons["durability"]}} <button type="submit" value=f"{{weapons.common_name}}" class="btn btn-primary">Equip</button></li>
-    {% else %}
-      <li><strong>{{weapons["name"]}}:</strong> {{weapons["number_owned"]}}; Durability {{weapons["durability"]}}</li>
+    {% if weapons["name"] != user["equipped_weapon"] %}
+      <form action="{{ url_for('profile_post') }}" method="POST">
+        <p><strong>{{weapons["name"]}}({{weapons["number_owned"]}}):</strong> {{weapons["durability"]}} <button type="submit" value="{{weapons['name']}}" name="weapon" class="btn btn-primary">Equip</button></p>
+      </form>
+      {% else %}
+      <p><strong>{{weapons["name"]}}({{weapons["number_owned"]}}):</strong> {{weapons["durability"]}}</>
     {% endif %}
   {% endfor %}
 {% else %}

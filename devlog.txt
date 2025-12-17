@@ -109,5 +109,15 @@ ivanC -- 2025-12-15 11:00
 evissW -- 2025-12-15 11:00
 - Building travel HTML template
 
+ivanC -- 2025-12-16 11:00
+- Gameplay for fishing, tweaking reward numbers
+
+evissW -- 2025-12-16 11:00
+- HTML of travel page building with Bootstrap elements
+
 jamesL -- 2025-12-16 18:12
 - Added attacks and victory to battle system
+
+seanT -- 2025-12-17 1:55
+- Fixed inventory and buttons to allow for choosing which weapon to equip
+- Added profile post function
