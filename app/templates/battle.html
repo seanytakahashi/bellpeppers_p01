@@ -75,5 +75,8 @@
     </div>
   </div>
 </div>
+{% for message in session["battle_log"] %}
+<p class="alert alert-{{ message[1] }} mb-0">{{ message[0] }}</p>
+{% endfor %}
 
 {% endblock %}

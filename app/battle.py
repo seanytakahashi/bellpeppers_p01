@@ -130,6 +130,7 @@ def battle_post():
 
     miss = random.randint(0, 100) > weapon['accuracy']
     if miss:
+        session["battle_log"].append(("You tried to attack but failed!", "warning"))
         flash("You tried to attack but failed!", "warning")
     else:
         damage_dice = weapon["damage_dice"]
@@ -146,11 +147,13 @@ def battle_post():
             return redirect(url_for("profile_get"))
 
         fish["stats"]["health"] -= damage
+        session["battle_log"].append((f"You attacked for {damage} damage!", "success"))
         flash(f"You attacked for {damage} damage!", "success")
 
     # Fish attacks
     miss = random.randint(0, 100) > fish['stats']['accuracy']
     if miss:
+        session["battle_log"].append(("The fish tried to attack you but missed!", "warning"))
         flash("The fish tried to attack you but missed!", "warning")
     else:
         damage_dice = fish["stats"]["damage"]
@@ -164,6 +167,7 @@ def battle_post():
         general_query("UPDATE profiles SET health=health-? WHERE username=?", [damage, session["username"]])
 
         user["health"] -= damage
+        session["battle_log"].append((f"You were attacked for {damage} damage!", "danger"))
         flash(f"You were attacked for {damage} damage!", "danger")
 
     return render_template("battle.html", fish=fish, weapon=weapon, user=user)
