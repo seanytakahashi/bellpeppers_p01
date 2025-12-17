@@ -13,7 +13,7 @@ app.secret_key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
 
 import auth
 app.register_blueprint(auth.bp)
-import battle
+from battle import *
 app.register_blueprint(battle.bp)
 import fish
 app.register_blueprint(fish.bp)
@@ -34,6 +34,8 @@ def profile_get():
 
     all_fish_owned = utility.general_query("SELECT scientific_name, number_owned FROM fish WHERE owner=?;", [user["id"]])
     all_weapons_owned = utility.general_query("SELECT name, number_owned, durability FROM weapons WHERE owner=?;", [user["id"]])
+
+    #
 
     return render_template('profile.html', user=user, all_fish_owned=all_fish_owned, all_weapons_owned=all_weapons_owned)
 
