@@ -12,7 +12,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 
 bp = Blueprint('fish', __name__, url_prefix='/fish')
 
-def get_fish():
+def get_fish(filter="%"):
     fishSet = utility.call_api("Species", "/export", [
         ("format", "json"),
         ("distinct", "true"),
@@ -26,7 +26,8 @@ def get_fish():
         ("filter", "/species@gn != 'Ferns and Allies'"),
         ("filter", "/species@gn != 'Flowering Plants'"),
         ("filter", "/species@gn != 'Lichens'"),
-        ("filter", "/species@status in ('Resolved Taxon','Species of Concern','Threatened','Endangered','Extinction')")
+        ("filter", "/species@status in ('Resolved Taxon','Species of Concern','Threatened','Endangered','Extinction')"),
+        ("filter", f"/species@gn like '{filter}'")
     ])["data"]
     # x = 0
     for fish in fishSet:
@@ -61,6 +62,7 @@ def fish_get():
             flash(f"You caught {cost} gold!","success")
             return redirect(url_for('profile_get'))
     else: # call the database, then send the result to battle
+        # fish = get_fish(filter=random.choices(utility.species_dict,weights=utility.species_dict.keys))
         fish = get_fish()
         return redirect(url_for('battle.battle_get', fish=fish["scientific_name"]))
 
@@ -70,7 +72,7 @@ def fish_get():
 def catch_weapon_get():
     weapon = battle.get_random_weapon()
     user = utility.get_user(session["username"])
-    
+
     # Adds to inventory but not auto equipped
     result = utility.general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [weapon['name'], user["id"]])
 
