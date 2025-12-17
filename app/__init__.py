@@ -48,11 +48,16 @@ def profile_post():
 # Display possible travel locations
 @app.get('/travel')
 def travel_get():
-    return ""
+    accordion_titles = getPopList()
+    accordion_contents = parseChanceList()
+    accordion_data = zip(accordion_titles, accordion_contents)
+    return render_template_string(HTML_TEMPLATE, accordion_data=accordion_data)
 
 @app.post('/travel')
 def travel_post():
     return ""
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
