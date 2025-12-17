@@ -86,6 +86,8 @@ def battle_get():
 
     user = get_user(session['username'])
 
+    session["battle_log"] = []
+
     if (user['equipped_weapon'] == None):
         flash("You don't have a weapon equipped and you fled the battle!", "danger")
         return redirect(url_for("profile_get"))
@@ -107,6 +109,8 @@ def battle_post():
     print(weapon)
     print(fish)
     print(user)
+    session["battle_log"].append("HELO")
+    print(session["battle_log"])
 
     # Decrease durability
     weapon["durability"] -= 1
@@ -134,7 +138,7 @@ def battle_post():
         if fish["stats"]["health"] <= damage:
             existing = general_query("SELECT * FROM fish WHERE owner=? AND scientific_name=?", [fish["scientific_name"], user["id"]])
             if len(existing) > 0:
-                general_query("UPDATE fish SET number_caught=number_caught+1 AND number_owned=number_owned+1 WHERE scientific_name=? AND owner=?", [fish["scientific_name"], user["id"]])
+                general_query("UPDATE fish SET number_caught=number_caught+1, number_owned=number_owned+1 WHERE scientific_name=? AND owner=?", [fish["scientific_name"], user["id"]])
             else:
                 insert_query("fish", {"scientific_name": fish["scientific_name"], "owner": user["id"]})
 
