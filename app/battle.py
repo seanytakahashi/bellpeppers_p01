@@ -86,7 +86,7 @@ def battle_get():
 
     user = get_user(session['username'])
 
-    session["battle_log"] = ["You're starting a battle!"]
+    session["battle_log"] = [("You're starting a battle!", "success")]
 
     if (user['equipped_weapon'] == None):
         flash("You don't have a weapon equipped and you fled the battle!", "danger")
@@ -115,6 +115,7 @@ def battle_post():
     weapon["durability"] -= 1
     if (weapon["durability"] == 0):
         if (weapon["number_owned"] == 1):
+            flash("Your weapon broke and you fled the battle!", "danger")
             general_query("UPDATE profiles SET equipped_weapon=NULL WHERE id=?", [user["id"]])
             general_query("DELETE FROM weapons WHERE name=? AND owner=?", [weapon["name"], user["id"]])
             return redirect(url_for('profile_get'))
@@ -128,7 +129,7 @@ def battle_post():
 
     miss = random.randint(0, 100) > weapon['accuracy']
     if miss:
-        session["battle_log"].extend(("You tried to attack but failed!", "warning"))
+        session["battle_log"].extend([("You tried to attack but failed!", "warning")])
     else:
         damage_dice = weapon["damage_dice"]
         damage = roll_dice(damage_dice)
@@ -144,12 +145,12 @@ def battle_post():
             return redirect(url_for("profile_get"))
 
         fish["stats"]["health"] -= damage
-        session["battle_log"].extend((f"You attacked for {damage} damage!", "success"))
+        session["battle_log"].extend([(f"You attacked for {damage} damage!", "success")])
 
     # Fish attacks
     miss = random.randint(0, 100) > fish['stats']['accuracy']
     if miss:
-        session["battle_log"].extend(("The fish tried to attack you but missed!", "warning"))
+        session["battle_log"].extend([("The fish tried to attack you but missed!", "warning")])
     else:
         damage_dice = fish["stats"]["damage"]
         damage = roll_dice(damage_dice)
@@ -162,9 +163,9 @@ def battle_post():
         general_query("UPDATE profiles SET health=health-? WHERE username=?", [damage, session["username"]])
 
         user["health"] -= damage
-        session["battle_log"].extend((f"You were attacked for {damage} damage!", "danger"))
+        session["battle_log"].extend([(f"You were attacked for {damage} damage!", "danger")])
 
-    # flash("POP")
+    flash("")
     return render_template("battle.html", fish=fish, weapon=weapon, user=user)
 
 # print(get_random_weapon())
