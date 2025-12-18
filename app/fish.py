@@ -13,6 +13,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 bp = Blueprint('fish', __name__, url_prefix='/fish')
 
 def get_fish(filter="%"):
+    # print(filter)
     fishSet = utility.call_api("Species", "/export", [
         ("format", "json"),
         ("distinct", "true"),
@@ -47,6 +48,7 @@ def get_fish(filter="%"):
     }
     utility.cache_entry("fish", fish)
     return fish
+# print(get_fish("'Fishes'"))
 
 @bp.get("/")
 def fish_get():
@@ -62,8 +64,8 @@ def fish_get():
             flash(f"You caught {cost} gold!","success")
             return redirect(url_for('profile_get'))
     else: # call the database, then send the result to battle
-        # fish = get_fish(filter=random.choices(utility.species_dict,weights=utility.species_dict.keys))
-        fish = get_fish()
+        fish = get_fish(filter=(random.choices(list(utility.species_dict),weights=list(utility.species_dict.values())))[0])
+        # fish = get_fish()
         return redirect(url_for('battle.battle_get', fish=fish["scientific_name"]))
 
 
