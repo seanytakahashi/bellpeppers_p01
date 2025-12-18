@@ -132,3 +132,7 @@ jamesL -- 2025-12-17 11:00
 - Fixed minor bugs in inventory
 - Added weapon and fish attack accuracy
 
+seanT -- 2025-12-18 1:43
+- Started adding CSS to profile/inventory page
+- Fixed minor bugs to restore working app
+- Altered signup to redirect to profile instead of repetitive login

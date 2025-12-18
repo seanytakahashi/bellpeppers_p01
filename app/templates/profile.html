@@ -15,39 +15,52 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 
-<p>Welcome, <strong>{{ session["username"] }}</strong>!</p>
+<h1 class="text-center pb-4">Welcome, <strong>{{ session["username"] }}</strong>!</h1>
 
-<p>Current health: <strong>{{ user["health"] }}</strong></p>
-<p>Current country: <strong>{{ user["country"] }}</strong></p>
-<p>Current balance: <strong>{{ user["balance"] }}</strong></p>
-<p>Equipped Weapon: <strong>{{ user["equipped_weapon"] }}</strong></p>
+<div class="mb-4">
+  <h3>Your Stats</h3>
+  <p>Current health: <strong>{{ user["health"] }}</strong></p>
+  <p>Current country: <strong>{{ user["country"] }}</strong></p>
+  <p>Current balance: <strong>{{ user["balance"] }}</strong></p>
+  <p>Equipped Weapon: <strong>{{ user["equipped_weapon"] }}</strong></p>
+</div>
+
 
 <h3>Fish Owned</h3>
 {% if all_fish_owned %}
+<div class="col-5">
   {% for fish in all_fish_owned %}
-    <p><strong>{{fish["scientific_name"]}}:</strong> {{fish["number_owned"]}}</p>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ fish[0]["scientific_name"] }}</h5>
+        <p class="card-text mb-1"> 
+          Number owned: {{fish[1]}}<br>
+          Max health: {{ fish[0]["stats"]["health"] }}<br>
+          Accuracy: {{ fish[0]["stats"]["accuracy"] }}
+        </p>
+      </div>
+    </div>
   {% endfor %}
+</div>
 {% else %}
   <p>No fish owned</p>
 {% endif %}
 
 
-<h3>Weapons Owned</h3>
-<h6>Name(# owned): Durability</h6>
-<!-- THIS IS BROKEN -->
-{% if all_weapons_owned %}
-  {% for weapons in all_weapons_owned %}
-  <!-- Have equipped status and equip button for non-equipped weapons-->
-    {% if weapons["name"] != user["equipped_weapon"] %}
-      <form action="{{ url_for('profile_post') }}" method="POST">
-        <p><strong>{{weapons["name"]}}({{weapons["number_owned"]}}):</strong> {{weapons["durability"]}} <button type="submit" value="{{weapons['name']}}" name="weapon" class="btn btn-primary">Equip</button></p>
-      </form>
-      {% else %}
-      <p><strong>{{weapons["name"]}}({{weapons["number_owned"]}}):</strong> {{weapons["durability"]}}</>
-    {% endif %}
-  {% endfor %}
-{% else %}
-  <p>No weapons owned</p>
-{% endif %}
+  <h3>Weapons Owned</h3>
+  <h6>Name(# owned): Durability</h6>
+  {% if all_weapons_owned %}
+    {% for weapons in all_weapons_owned %}
+      {% if weapons["name"] != user["equipped_weapon"] %}
+        <form action="{{ url_for('profile_post') }}" method="POST">
+          <p><strong>{{weapons["name"]}}({{weapons["number_owned"]}}):</strong> {{weapons["durability"]}} <button type="submit" value="{{weapons['name']}}" name="weapon" class="btn btn-primary">Equip</button></p>
+        </form>
+        {% else %}
+        <p><strong>{{weapons["name"]}}({{weapons["number_owned"]}}):</strong> {{weapons["durability"]}}</>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <p>No weapons owned</p>
+  {% endif %}
 
 {% endblock %}

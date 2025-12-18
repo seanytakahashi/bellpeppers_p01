@@ -13,6 +13,7 @@ app.secret_key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
 
 import auth
 app.register_blueprint(auth.bp)
+import battle
 from battle import *
 app.register_blueprint(battle.bp)
 import fish
@@ -33,11 +34,20 @@ def profile_get():
     user = utility.get_user(session["username"])
 
     all_fish_owned = utility.general_query("SELECT scientific_name, number_owned FROM fish WHERE owner=?;", [user["id"]])
-    all_weapons_owned = utility.general_query("SELECT name, number_owned, durability FROM weapons WHERE owner=?;", [user["id"]])
+    all_weapons_owned = utility.general_query("SELECT name FROM weapons WHERE owner=?;", [user["id"]])
 
-    #
+    fish_stats = []
+    weapons_stats = []
 
-    return render_template('profile.html', user=user, all_fish_owned=all_fish_owned, all_weapons_owned=all_weapons_owned)
+    for fish in all_fish_owned:
+        raw = pull_cache("fish", ("scientific_name", fish["scientific_name"]))
+        # 0 index: fish data including health and accuracy; 1 index: number owned
+        fish_stats.append([initialize_fish(raw), fish["number_owned"]])
+
+    for weapon in all_weapons_owned:
+        weapons_stats.append(initialize_weapon(weapon["name"], user["id"]))
+
+    return render_template('profile.html', user=user, all_fish_owned=fish_stats, all_weapons_owned=weapons_stats)
 
 @app.post('/profile')
 def profile_post():
