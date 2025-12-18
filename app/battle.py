@@ -36,19 +36,19 @@ def get_random_weapon():
 def get_fish_stats(status):
     stats = {
         "Resolved Taxon": {
-            "max_health": 5,
+            "max_health": 10,
             "damage": "1d4",
         },
         "Species of Concern": {
-            "max_health": 8,
+            "max_health": 20,
             "damage": "1d4",
         },
         "Threatened": {
-            "max_health": 10,
-            "damage": "1d4",
+            "max_health": 25,
+            "damage": "1d6",
         },
         "Endangered": {
-            "max_health": 10,
+            "max_health": 30,
             "damage": "1d8",
         },
         "Extinction": {
@@ -86,7 +86,7 @@ def battle_get():
 
     user = get_user(session['username'])
 
-    session["battle_log"] = []
+    session["battle_log"] = ["You're starting a battle!"]
 
     if (user['equipped_weapon'] == None):
         flash("You don't have a weapon equipped and you fled the battle!", "danger")
@@ -109,14 +109,12 @@ def battle_post():
     print(weapon)
     print(fish)
     print(user)
-    session["battle_log"].append("HELO")
     print(session["battle_log"])
 
     # Decrease durability
     weapon["durability"] -= 1
     if (weapon["durability"] == 0):
         if (weapon["number_owned"] == 1):
-            flash("Your weapon broke and you fled the battle!", "danger")
             general_query("UPDATE profiles SET equipped_weapon=NULL WHERE id=?", [user["id"]])
             general_query("DELETE FROM weapons WHERE name=? AND owner=?", [weapon["name"], user["id"]])
             return redirect(url_for('profile_get'))
@@ -130,14 +128,13 @@ def battle_post():
 
     miss = random.randint(0, 100) > weapon['accuracy']
     if miss:
-        session["battle_log"].append(("You tried to attack but failed!", "warning"))
-        flash("You tried to attack but failed!", "warning")
+        session["battle_log"].extend(("You tried to attack but failed!", "warning"))
     else:
         damage_dice = weapon["damage_dice"]
         damage = roll_dice(damage_dice)
 
         if fish["stats"]["health"] <= damage:
-            existing = general_query("SELECT * FROM fish WHERE owner=? AND scientific_name=?", [fish["scientific_name"], user["id"]])
+            existing = general_query("SELECT * FROM fish WHERE owner=? AND scientific_name=?", [user["id"], fish["scientific_name"]])
             if len(existing) > 0:
                 general_query("UPDATE fish SET number_caught=number_caught+1, number_owned=number_owned+1 WHERE scientific_name=? AND owner=?", [fish["scientific_name"], user["id"]])
             else:
@@ -147,14 +144,12 @@ def battle_post():
             return redirect(url_for("profile_get"))
 
         fish["stats"]["health"] -= damage
-        session["battle_log"].append((f"You attacked for {damage} damage!", "success"))
-        flash(f"You attacked for {damage} damage!", "success")
+        session["battle_log"].extend((f"You attacked for {damage} damage!", "success"))
 
     # Fish attacks
     miss = random.randint(0, 100) > fish['stats']['accuracy']
     if miss:
-        session["battle_log"].append(("The fish tried to attack you but missed!", "warning"))
-        flash("The fish tried to attack you but missed!", "warning")
+        session["battle_log"].extend(("The fish tried to attack you but missed!", "warning"))
     else:
         damage_dice = fish["stats"]["damage"]
         damage = roll_dice(damage_dice)
@@ -167,9 +162,9 @@ def battle_post():
         general_query("UPDATE profiles SET health=health-? WHERE username=?", [damage, session["username"]])
 
         user["health"] -= damage
-        session["battle_log"].append((f"You were attacked for {damage} damage!", "danger"))
-        flash(f"You were attacked for {damage} damage!", "danger")
+        session["battle_log"].extend((f"You were attacked for {damage} damage!", "danger"))
 
+    # flash("POP")
     return render_template("battle.html", fish=fish, weapon=weapon, user=user)
 
 # print(get_random_weapon())
