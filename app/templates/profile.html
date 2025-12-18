@@ -10,10 +10,6 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
 
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-</head>
 
 <h1 class="text-center pb-4">Welcome, <strong>{{ session["username"] }}</strong>!</h1>
 
@@ -28,8 +24,8 @@
 
 <h3>Fish Owned</h3>
 {% if all_fish_owned %}
-<div class="container-md">
-  <div class="row"
+<div class="container-fluid px-4">
+  <div class="row justify-content-between"
     <div class="col-md-4 mt-5">
       {% for fish in all_fish_owned %}
         <div class="card mb-3">
@@ -51,20 +47,42 @@
 {% endif %}
 
 
-  <h3>Weapons Owned</h3>
-  <h6>Name(# owned): Durability</h6>
-  {% if all_weapons_owned %}
-    {% for weapons in all_weapons_owned %}
-      {% if weapons["name"] != user["equipped_weapon"] %}
-        <form action="{{ url_for('profile_post') }}" method="POST">
-          <p><strong>{{weapons["name"]}}({{weapons["number_owned"]}}):</strong> {{weapons["durability"]}} <button type="submit" value="{{weapons['name']}}" name="weapon" class="btn btn-primary">Equip</button></p>
-        </form>
+<h3>Weapons Owned</h3>
+{% if all_weapons_owned %}
+<div class="container-fluid px-4">
+  <div class="row justify-content-between">
+    <div class="col-md-4 mt-5">
+      {% for weapons in all_weapons_owned %}
+        {% if weapons["name"] != user["equipped_weapon"] %}
+          <form action="{{ url_for('profile_post') }}" method="POST">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title">{{weapons["name"]}}</h5>
+                <p class="card-text mb-1">
+                  Number owned: {{weapons["number_owned"]}}<br>
+                  Durability: {{weapons["durability"]}}<br>
+                  <button type="submit" value="{{weapons['name']}}" name="weapon" class="btn btn-primary">Equip</button>
+                </p>
+              </div>
+            </div>
+          </form>
         {% else %}
-        <p><strong>{{weapons["name"]}}({{weapons["number_owned"]}}):</strong> {{weapons["durability"]}}</>
-      {% endif %}
-    {% endfor %}
-  {% else %}
-    <p>No weapons owned</p>
-  {% endif %}
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">{{weapons["name"]}}</h5>
+              <p class="card-text mb-1">
+                Number owned: {{weapons["number_owned"]}}<br>
+                Durability: {{weapons["durability"]}}
+              </p>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% else %}
+  <p>No weapons owned</p>
+{% endif %}
 
 {% endblock %}
