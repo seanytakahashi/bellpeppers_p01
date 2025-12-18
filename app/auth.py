@@ -31,7 +31,8 @@ def signup_post():
         hashed_pswd = generate_password_hash(password)
         utility.insert_query("profiles", ({"username": username, "password": hashed_pswd}))
         flash('Signup successful!', 'success')
-        return redirect(url_for('auth.login_get'))
+        session['username'] = username
+        return redirect(url_for('profile_get'))
     else:
         flash("Username already taken!", 'danger')
         return redirect(url_for('auth.signup_get'))
