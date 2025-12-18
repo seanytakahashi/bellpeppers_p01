@@ -1,31 +1,31 @@
 import utility
 
 def get_common(key):
-    data = utility.call_api("Countries", "/" + key)
+    data = utility.call_api("Countries", "/name/" + key)
     common = data[0]['name']['common']
     return common
 
 def get_pop(key):
-    data = utility.call_api("Countries", "/" + key)
-    pop = data[0]['maps']['population']
+    data = utility.call_api("Countries", "/name/" + key)
+    pop = data[0]['population']
     return pop
 
-def get_list(username):
-    country = utility.get_user(username)
-    data = utility.call_api("Countries", "/" + country)
-    list = data[0]['borders']
-    return list
+def get_list(user):
+    country = utility.get_user(user)["country"]
+    data = utility.call_api("Countries", "/name/" + country)
+    borders = data[0].get('borders', [])
+    return borders
 
-def get_common_list():
+def get_common_list(user):
     list = []
-    for country in get_list():
+    for country in get_list(user):
         list.append(get_common(country))
     return list
 
-def get_pop_list():
+def get_pop_list(user):
     list = []
-    for country in get_list():
-        list.append(get_pop_list(country))
+    for country in get_list(user):
+        list.append(get_pop(country))
     return list
 
 def make_numbers(p):
@@ -35,27 +35,22 @@ def make_numbers(p):
         current = (current * 1103515245 + 12345) % 2**31
         nums.append((current % 1000000) / 1000000)
     total = sum(nums)
+    if total == 0:
+        return [0] * 13
     scale = 100 / total
     return [n * scale for n in nums]
 
-def getChanceList():
+def get_chance_list(user):
     list = []
-    for pop in getPopList():
-        list.append(make_numbers(pop));
-    #print(list)
-
-def get_chance_list():
-    list = []
-    for pop in get_pop_list():
+    for pop in get_pop_list(user):
         list.append(make_numbers(pop))
     return list
 
-def parseChanceList():
-    content = [];
-    for chances in getChanceList():
-        cstring = "";
-        i = 0
-        cstring += species_list[i] + ": " + chance + "\n"
-        i = i + 1
+def parse_chance_list(user, species_list):
+    content = []
+    for chances in get_chance_list(user):
+        cstring = ""
+        for i, chance in enumerate(chances):
+            cstring += species_list[i] + ": " + str(round(chance, 2)) + "%<br>"
         content.append(cstring)
-    return content;
+    return content

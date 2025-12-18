@@ -11,17 +11,19 @@
 {% block content %}
 
 <div class="container mb-4">
-  <div class="row g-4">
-        <div class="accordion" id="accordionExample">
+  <div class="row">
+        <div id="accordion" class="accordion">
           {% for title, content in accordion_data %}
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="heading{{ loop.index }}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
-                    {{ title }}
-                </button>
-            </h2>
-            <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#accordionExample">
-                 <div class="accordion-body">
+          <div class="card">
+            <div class="card-header" id="heading{{ loop.index }}">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                        {{ title }}
+                    </button>
+                </h5>
+            </div>
+            <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
+                 <div class="card-body">
                    {{ content|safe }}
                  </div>
              </div>
