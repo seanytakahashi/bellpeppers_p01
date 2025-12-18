@@ -28,19 +28,23 @@
 
 <h3>Fish Owned</h3>
 {% if all_fish_owned %}
-<div class="col-5">
-  {% for fish in all_fish_owned %}
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">{{ fish[0]["scientific_name"] }}</h5>
-        <p class="card-text mb-1"> 
-          Number owned: {{fish[1]}}<br>
-          Max health: {{ fish[0]["stats"]["health"] }}<br>
-          Accuracy: {{ fish[0]["stats"]["accuracy"] }}
-        </p>
-      </div>
+<div class="container-md">
+  <div class="row"
+    <div class="col-md-4 mt-5">
+      {% for fish in all_fish_owned %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">{{ fish[0]["scientific_name"] }}</h5>
+            <p class="card-text mb-1">
+              Number owned: {{fish[1]}}<br>
+              Max health: {{ fish[0]["stats"]["health"] }}<br>
+              Accuracy: {{ fish[0]["stats"]["accuracy"] }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
     </div>
-  {% endfor %}
+  </div>
 </div>
 {% else %}
   <p>No fish owned</p>
