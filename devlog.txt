@@ -149,3 +149,17 @@ evissW -- 2025-12-18 11:00
 seanT -- 2025-12-18 11:00
 - Added cards for weapons
 - Additional bootstrap implemented
+
+jamesL -- 2025-12-19 10:59
+- Started making shop page
+
+ivanC -- 2025-12-19 11:00
+- Catch chances of fish
+
+evissW -- 2025-12-19 11:00
+- Finished frontend template of countries
+- Working on ability to travel between countries
+
+seanT -- 2025-12-19 11:00
+- Finished styling of profile page
+- Starting to work on ability to sell fish
