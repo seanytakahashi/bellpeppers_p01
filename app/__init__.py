@@ -85,5 +85,9 @@ def shop_get():
 
     return render_template('shop.html', weapons=weapons)
 
+@app.post('/shop')
+def shop_post():
+    return ""
+
 if __name__ == '__main__':
     app.run(debug=True)

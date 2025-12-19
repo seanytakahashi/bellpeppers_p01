@@ -15,9 +15,16 @@
       {% for i in range(3) %}
         <div class="card mb-3">
           <div class="card-body">
-            <h5 class="card-title">{{ weapons[j * 3 + i]["name"] }}</h5>
-            <p class="card-text mb-1">
-
+            <h5 class="card-title">{{ weapons[j * 3 + i]["name"] }} - {{ weapons[j * 3 + i]['price'] }} Gold</h5>
+            <p class="card-text">
+              Damage: {{ weapons[j * 3 + i]['damage_dice'] }}<br>
+              Durability: {{ weapons[j * 3 + i]['max_durability'] }}<br>
+              Accuracy: {{ weapons[j * 3 + i]['range'] }}<br>
+              <form action="{{ url_for('shop_post') }}" method="POST">
+                <input type="hidden" name="weapon_name" value="{{ weapons[j * 3 + i]['name'] }}">
+                <input type="hidden" name="price" value="{{ weapons[j * 3 + i]['price'] }}">
+                <button type="submit" class="btn btn-primary">Buy</button>
+              </form>
             </p>
           </div>
         </div>
