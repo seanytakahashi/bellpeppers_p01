@@ -10,27 +10,63 @@
 {% block title %}Travel{% endblock %}
 {% block content %}
 
-<div class="container mb-4">
+<div class="container my-5">
   <div class="row">
-        <div id="accordion" class="accordion">
-          {% for title, content in accordion_data %}
-          <div class="card">
-            <div class="card-header" id="heading{{ loop.index }}">
-                <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
-                        {{ title }}
-                    </button>
-                </h5>
-            </div>
-            <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
-                 <div class="card-body">
-                   {{ content|safe }}
-                 </div>
-             </div>
+
+    <!-- Accordion -->
+    <div class="col-md-8">
+      <div id="accordion" class="accordion">
+
+        {% for title, content in accordion_data %}
+        <div class="card mb-3 shadow-sm border-0">
+
+          <div class="card-header bg-white p-0" id="heading{{ loop.index }}">
+            <h5 class="mb-0">
+              <button
+                class="btn btn-block text-left d-flex justify-content-between align-items-center px-4 py-3 font-weight-bold"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapse{{ loop.index }}"
+                aria-expanded="false"
+                aria-controls="collapse{{ loop.index }}"
+              >
+                <span>{{ title }}</span>
+                <span>&#9662;</span>
+              </button>
+            </h5>
           </div>
-          {% endfor %}
+
+          <div
+            id="collapse{{ loop.index }}"
+            class="collapse"
+            aria-labelledby="heading{{ loop.index }}"
+            data-parent="#accordion"
+          >
+            <div class="card-body bg-light px-4 py-3">
+              {{ content | safe }}
+            </div>
+          </div>
+
         </div>
+        {% endfor %}
+
+      </div>
     </div>
+
+    <!-- Current Country Chances -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white font-weight-bold">
+          Your Country’s Chances
+        </div>
+        <div class="card-body bg-light">
+          {{ current_country_chances | safe }}
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
+
 
 {% endblock %}

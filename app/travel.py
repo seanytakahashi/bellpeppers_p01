@@ -54,3 +54,11 @@ def parse_chance_list(user, species_list):
             cstring += species_list[i] + ": " + str(round(chance, 2)) + "%<br>"
         content.append(cstring)
     return content
+
+def get_current_country_chances(user, species_list):
+    country = utility.get_user(user)["country"]
+    chances = make_numbers(get_pop(country))
+    cstring = ""
+    for i, chance in enumerate(chances):
+        cstring += species_list[i] + ": " + str(round(chance, 2)) + "%<br>"
+    return cstring

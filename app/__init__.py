@@ -61,14 +61,16 @@ def profile_post():
 @app.get('/travel')
 def travel_get():
     user = session["username"]
+
     accordion_titles = get_common_list(user)
     accordion_contents = parse_chance_list(user, species_list)
     accordion_data = zip(accordion_titles, accordion_contents)
-    return render_template('travel.html', accordion_data=accordion_data)
 
-@app.post('/travel')
-def travel_post():
-    return ""
+    current_country_chances = get_current_country_chances(user, species_list)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    return render_template(
+        'travel.html',
+        accordion_data=accordion_data,
+        current_country_chances=current_country_chances
+    )
+
