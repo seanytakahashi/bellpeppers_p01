@@ -47,7 +47,7 @@ def pull_cache(table, query):
     c.close()
     return output
 
-def query_cache(query):
+def query_cache(query_string, params=()):
     c = cache.cursor()
     c.execute(query_string, params)
     raw = c.fetchall()

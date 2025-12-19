@@ -76,13 +76,10 @@ def travel_get():
 
 @app.get('/shop')
 def shop_get():
-    weapons = utility.query_cache("")
+    weapons = utility.query_cache("SELECT * FROM weapons ORDER BY random() LIMIT 6")
 
-    weapons = []
-    for i in range(6):
-        new_weapon = battle.get_random_weapon()
-        new_weapon["price"] = new_weapon["range"] + new_weapon["max_durability"]
-        weapons.append(new_weapon)
+    for weapon in weapons:
+        weapon["price"] = weapon["range"] + weapon["max_durability"]
 
     print(weapons[0])
 
