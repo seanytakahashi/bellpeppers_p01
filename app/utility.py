@@ -47,6 +47,15 @@ def pull_cache(table, query):
     c.close()
     return output
 
+def query_cache(query):
+    c = cache.cursor()
+    c.execute(query_string, params)
+    raw = c.fetchall()
+    output = dictify(raw, c)
+    c.close()
+    db.commit()
+    return output
+
 # data: "key": value}
 def insert_query(table, data):
     c = db.cursor()

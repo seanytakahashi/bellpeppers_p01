@@ -27,7 +27,7 @@ def check_authentification():
 
 @app.get('/')
 def home_get():
-    return render_template('base.html')
+    return render_template('home.html')
 
 @app.get('/profile')
 def profile_get():
@@ -73,6 +73,20 @@ def travel_get():
         accordion_data=accordion_data,
         current_country_chances=current_country_chances
     )
+
+@app.get('/shop')
+def shop_get():
+    weapons = utility.query_cache("")
+
+    weapons = []
+    for i in range(6):
+        new_weapon = battle.get_random_weapon()
+        new_weapon["price"] = new_weapon["range"] + new_weapon["max_durability"]
+        weapons.append(new_weapon)
+
+    print(weapons[0])
+
+    return render_template('shop.html', weapons=weapons)
 
 if __name__ == '__main__':
     app.run(debug=True)

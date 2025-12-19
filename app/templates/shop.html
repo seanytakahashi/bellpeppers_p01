@@ -1,0 +1,28 @@
+<!--
+ Sean Takahashi, Ivan Chen, James Lei, Eviss Wu
+ Bell Peppers
+ SoftDev
+ P01
+ 2025-12-22m
+-->
+
+{% extends "base.html" %}
+{% block title %}Shop{% endblock %}
+{% block content %}
+
+{% for j in range(2) %}
+  <div class="card-deck">
+      {% for i in range(3) %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">{{ weapons[j * 3 + i]["name"] }}</h5>
+            <p class="card-text mb-1">
+
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+  </div>
+{% endfor %}
+
+{% endblock %}
