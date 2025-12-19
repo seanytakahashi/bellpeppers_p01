@@ -9,45 +9,56 @@ import battle
 import random
 import time
 import travel
+import signal
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 
 bp = Blueprint('fish', __name__, url_prefix='/fish')
 
+def sighandler(signal, frame): # this is for timeouts
+    raise Exception("timeout")
+
 def get_fish(filter="%"):
-    print(filter)
-    fishSet = utility.call_api("Species", "/export", [
-        ("format", "json"),
-        ("distinct", "true"),
-        ("columns", "/species@cn,sn,status,range_envelope,gn"),
-        ("sort", "/species@cn asc;/species@sn asc"),
-        ("filter", "/species@cn not like '%no common name%'"),
-        ("filter", "/species@cn not like '%unnamed%'"),
-        ("filter", "/species@range_envelope is not null"),
-        ("filter", "/species@gn != 'Algae'"),
-        ("filter", "/species@gn != 'Conifers and Cycads'"),
-        ("filter", "/species@gn != 'Ferns and Allies'"),
-        ("filter", "/species@gn != 'Flowering Plants'"),
-        ("filter", "/species@gn != 'Lichens'"),
-        ("filter", "/species@status in ('Resolved Taxon','Species of Concern','Threatened','Endangered','Extinction')"),
-        ("filter", f"/species@gn like '{filter}'")
-    ])["data"]
-    # x = 0
-    for fish in fishSet:
-        # x += 1
-        try:
-            fish[3] = utility.find_area(fish[3][9:-2])
-        except:
-            print(fish[0])
-            print(fish[3])
-    raw = random.choice(fishSet)
-    fish = {
-        "scientific_name": raw[1]["value"],
-        "common_name": raw[0],
-        "status": raw[2],
-        "range": raw[3],
-        "type": raw[4]
-    }
-    utility.cache_entry("fish", fish)
+    # print(filter)
+    try:
+        signal.signal(signal.SIGARLM, sighandler)
+        signal.alarm(5)
+        fishSet = utility.call_api("Species", "/export", [
+            ("format", "json"),
+            ("distinct", "true"),
+            ("columns", "/species@cn,sn,status,range_envelope,gn"),
+            ("sort", "/species@cn asc;/species@sn asc"),
+            ("filter", "/species@cn not like '%no common name%'"),
+            ("filter", "/species@cn not like '%unnamed%'"),
+            ("filter", "/species@range_envelope is not null"),
+            ("filter", "/species@gn != 'Algae'"),
+            ("filter", "/species@gn != 'Conifers and Cycads'"),
+            ("filter", "/species@gn != 'Ferns and Allies'"),
+            ("filter", "/species@gn != 'Flowering Plants'"),
+            ("filter", "/species@gn != 'Lichens'"),
+            ("filter", "/species@status in ('Resolved Taxon','Species of Concern','Threatened','Endangered','Extinction')"),
+            ("filter", f"/species@gn like '{filter}'")
+        ])["data"]
+        # x = 0
+        for fish in fishSet:
+            # x += 1
+            try:
+                fish[3] = utility.find_area(fish[3][9:-2])
+            except:
+                print(fish[0])
+                print(fish[3])
+        raw = random.choice(fishSet)
+        fish = {
+            "scientific_name": raw[1]["value"],
+            "common_name": raw[0],
+            "status": raw[2],
+            "range": raw[3],
+            "type": raw[4]
+        }
+        utility.cache_entry("fish", fish)
+    except:
+        print("pulling from cache")
+        fish = utility.general_query("SELECT * FROM fish ORDER BY random() LIMIT 1;")[0]
+        print(fish)
     return fish
 # print(get_fish("'Fishes'"))
 
