@@ -6,6 +6,7 @@
 
 from flask import Flask, render_template, request, flash, url_for, redirect, session
 import sqlite3
+import utility
 from travel import *
 
 app = Flask(__name__)
@@ -14,7 +15,6 @@ app.secret_key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
 import auth
 app.register_blueprint(auth.bp)
 import battle
-from battle import *
 app.register_blueprint(battle.bp)
 import fish
 app.register_blueprint(fish.bp)
@@ -40,12 +40,12 @@ def profile_get():
     weapons_stats = []
 
     for fish in all_fish_owned:
-        raw = pull_cache("fish", ("scientific_name", fish["scientific_name"]))
+        raw = utility.pull_cache("fish", ("scientific_name", fish["scientific_name"]))
         # 0 index: fish data including health and accuracy; 1 index: number owned
-        fish_stats.append([initialize_fish(raw), fish["number_owned"]])
+        fish_stats.append([battle.initialize_fish(raw), fish["number_owned"]])
 
     for weapon in all_weapons_owned:
-        weapons_stats.append(initialize_weapon(weapon["name"], user["id"]))
+        weapons_stats.append(battle.initialize_weapon(weapon["name"], user["id"]))
 
     return render_template('profile.html', user=user, all_fish_owned=fish_stats, all_weapons_owned=weapons_stats)
 
@@ -63,10 +63,10 @@ def travel_get():
     user = session["username"]
 
     accordion_titles = get_common_list(user)
-    accordion_contents = parse_chance_list(user, species_list)
+    accordion_contents = parse_chance_list(user, utility.species_list)
     accordion_data = zip(accordion_titles, accordion_contents)
 
-    current_country_chances = get_current_country_chances(user, species_list)
+    current_country_chances = get_current_country_chances(user, utility.species_list)
 
     return render_template(
         'travel.html',
