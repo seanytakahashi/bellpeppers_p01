@@ -18,7 +18,6 @@ CACHE_FILE = "cache.db"
 cache = sqlite3.connect(CACHE_FILE, check_same_thread=False)
 
 species_list = ['Insects', 'Arachnids', 'Snails', 'Clams', 'Birds', 'Mammals', 'Fishes', 'Crustaceans', 'Reptiles', 'Amphibians', 'Flatworms and Roundworms', 'Sponges', 'Annelid Worms']
-species_dict = {"Insects":15.0, "Fishes":2000.0}
 
 def dictify(raw, c):
     output = []

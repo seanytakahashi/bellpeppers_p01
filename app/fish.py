@@ -8,12 +8,13 @@ import utility
 import battle
 import random
 import time
+import travel
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 
 bp = Blueprint('fish', __name__, url_prefix='/fish')
 
 def get_fish(filter="%"):
-    # print(filter)
+    print(filter)
     fishSet = utility.call_api("Species", "/export", [
         ("format", "json"),
         ("distinct", "true"),
@@ -59,12 +60,19 @@ def fish_get():
         if (chance > 95):
             return redirect(url_for("fish.catch_weapon_get"))
         else:
-            cost = random.randint(20,100)
+            cost = random.randint(40,100)
             utility.general_query("UPDATE profiles SET balance = balance + ? WHERE username=?", [cost, session["username"]])
             flash(f"You caught {cost} gold!","success")
             return redirect(url_for('profile_get'))
     else: # call the database, then send the result to battle
-        fish = get_fish(filter=(random.choices(list(utility.species_dict),weights=list(utility.species_dict.values())))[0])
+        list = travel.get_current_country_chances(session['username'], utility.species_list).split("%<br>")
+        keyset = []
+        list.pop()
+        for pair in list:
+            keyset.append(float(pair.split(": ")[1]))
+        # print(keyset)
+        # print(utility.species_list)
+        fish = get_fish(filter=random.choices(utility.species_list,weights=keyset)[0])
         # fish = get_fish()
         return redirect(url_for('battle.battle_get', fish=fish["scientific_name"]))
 
