@@ -74,3 +74,5 @@ def travel_get():
         current_country_chances=current_country_chances
     )
 
+if __name__ == '__main__':
+    app.run(debug=True)
