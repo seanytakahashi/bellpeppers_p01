@@ -29,7 +29,7 @@
               Accuracy: {{ weapons[j * 3 + i]['range'] }}<br>
               <form action="{{ url_for('shop_post') }}" method="POST">
                 <input type="hidden" name="weapon_name" value="{{ weapons[j * 3 + i]['name'] }}">
-                <input type="hidden" name="price" value="{{ weapons[j * 3 + i]['price'] }}">
+                <input type="hidden" name="weapon_price" value="{{ weapons[j * 3 + i]['price'] }}">
                 {% if user["balance"] < weapons[j * 3 + i]['price'] %}
                   <button type="submit" class="btn btn-warning text-danger" title="Not enough gold!" disabled>{{ weapons[j * 3 + i]['price'] }} Gold</button>
                 {% else %}
@@ -46,9 +46,9 @@
 
 <h3 class="col-md-9 mx-auto text-center">Fish</h3>
 
+{% if random_fish %}
 <p>The local aquarium is looking for some exotic fish! They are offering to buy the following fish from you...</p>
 
-{% if random_fish %}
 <div class="card-columns">
   {% for fish in random_fish %}
     <div class="card mb-3">
@@ -58,7 +58,7 @@
           Number owned: {{ fish[1] }}<br>
           <form action="{{ url_for('shop_post') }}" method="POST">
             <input type="hidden" name="fish_name" value="{{ fish[0]['scientific_name'] }}">
-            <input type="hidden" name="price" value="{{ fish[2] }}">
+            <input type="hidden" name="fish_price" value="{{ fish[2] }}">
             <button type="submit" class="btn btn-warning">{{ fish[2] }} Gold</button>
           </form>
         </p>
@@ -67,6 +67,6 @@
   {% endfor %}
 </div>
 {% else %}
-<p>You do not own any fish.</p>
+<p>You do not own any fish to sell.</p>
 {% endif %}
 {% endblock %}
