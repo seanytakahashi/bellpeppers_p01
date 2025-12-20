@@ -14,7 +14,7 @@ CREATE TABLE profiles (
     equipped_weapon TEXT,
     health INTEGER DEFAULT 100,
     country TEXT DEFAULT 'USA',
-    balance INTEGER DEFAULT 0
+    balance INTEGER DEFAULT 100
 );""")
 
 c.executescript("""

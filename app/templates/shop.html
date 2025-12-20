@@ -10,12 +10,20 @@
 {% block title %}Shop{% endblock %}
 {% block content %}
 
+<h1 class="col-md-9 mx-auto text-center">Shop</h1>
+
+<h3 class="col-md-9 mx-auto text-center">Fish</h3>
+
+
+
+<h3 class="col-md-9 mx-auto text-center">Weapons</h3>
+
 {% for j in range(2) %}
   <div class="card-deck">
       {% for i in range(3) %}
         <div class="card mb-3">
           <div class="card-body">
-            <h5 class="card-title">{{ weapons[j * 3 + i]["name"] }} - {{ weapons[j * 3 + i]['price'] }} Gold</h5>
+            <h5 class="card-title">{{ weapons[j * 3 + i]["name"] }}</h5>
             <p class="card-text">
               Damage: {{ weapons[j * 3 + i]['damage_dice'] }}<br>
               Durability: {{ weapons[j * 3 + i]['max_durability'] }}<br>
@@ -23,7 +31,7 @@
               <form action="{{ url_for('shop_post') }}" method="POST">
                 <input type="hidden" name="weapon_name" value="{{ weapons[j * 3 + i]['name'] }}">
                 <input type="hidden" name="price" value="{{ weapons[j * 3 + i]['price'] }}">
-                <button type="submit" class="btn btn-primary">Buy</button>
+                <button type="submit" class="btn btn-warning">{{ weapons[j * 3 + i]['price'] }} Gold</button>
               </form>
             </p>
           </div>
