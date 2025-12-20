@@ -20,8 +20,8 @@ def sighandler(signal, frame): # this is for timeouts
 def get_fish(filter="%"):
     # print(filter)
     try:
-        signal.signal(signal.SIGARLM, sighandler)
-        signal.alarm(5)
+        # signal.signal(signal.SIGARLM, sighandler)
+        # signal.alarm(5)
         fishSet = utility.call_api("Species", "/export", [
             ("format", "json"),
             ("distinct", "true"),
