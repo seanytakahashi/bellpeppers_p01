@@ -12,11 +12,10 @@
 
 <h1 class="col-md-9 mx-auto text-center">Shop</h1>
 
-<h3 class="col-md-9 mx-auto text-center">Fish</h3>
-
-
+<h4>Current balance: <strong>{{ user["balance"] }} Gold</strong></h4>
 
 <h3 class="col-md-9 mx-auto text-center">Weapons</h3>
+<p>The local blacksmith is offering the following weapons for sale...</p>
 
 {% for j in range(2) %}
   <div class="card-deck">
@@ -31,7 +30,11 @@
               <form action="{{ url_for('shop_post') }}" method="POST">
                 <input type="hidden" name="weapon_name" value="{{ weapons[j * 3 + i]['name'] }}">
                 <input type="hidden" name="price" value="{{ weapons[j * 3 + i]['price'] }}">
-                <button type="submit" class="btn btn-warning">{{ weapons[j * 3 + i]['price'] }} Gold</button>
+                {% if user["balance"] < weapons[j * 3 + i]['price'] %}
+                  <button type="submit" class="btn btn-warning text-danger" title="Not enough gold!" disabled>{{ weapons[j * 3 + i]['price'] }} Gold</button>
+                {% else %}
+                  <button type="submit" class="btn btn-warning">{{ weapons[j * 3 + i]['price'] }} Gold</button>
+                {% endif %}
               </form>
             </p>
           </div>
@@ -40,4 +43,30 @@
   </div>
 {% endfor %}
 
+
+<h3 class="col-md-9 mx-auto text-center">Fish</h3>
+
+<p>The local aquarium is looking for some exotic fish! They are offering to buy the following fish from you...</p>
+
+{% if random_fish %}
+<div class="card-columns">
+  {% for fish in random_fish %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ fish[0]["scientific_name"] }}</h5>
+        <p class="card-text">
+          Number owned: {{ fish[1] }}<br>
+          <form action="{{ url_for('shop_post') }}" method="POST">
+            <input type="hidden" name="fish_name" value="{{ fish[0]['scientific_name'] }}">
+            <input type="hidden" name="price" value="{{ fish[2] }}">
+            <button type="submit" class="btn btn-warning">{{ fish[2] }} Gold</button>
+          </form>
+        </p>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>You do not own any fish.</p>
+{% endif %}
 {% endblock %}

@@ -76,14 +76,31 @@ def travel_get():
 
 @app.get('/shop')
 def shop_get():
+    user = utility.get_user(session["username"])
+
     weapons = utility.query_cache("SELECT * FROM weapons ORDER BY random() LIMIT 6")
+    random_fish = utility.general_query("SELECT * FROM fish WHERE owner=? ORDER BY random() LIMIT 6", [user['id']])
+    
+    fish_stats = []
+    
+    for fish in random_fish:
+        raw = utility.pull_cache("fish", ("scientific_name", fish["scientific_name"]))
+
+        data = battle.initialize_fish(raw)
+
+        fish["price"] = int((data["stats"]["max_health"] + data["stats"]["accuracy"]) / 2)
+
+        # 0 index: fish data including health and accuracy; 1 index: number owned; 2 index: price
+        fish_stats.append([data, fish["number_owned"], fish["price"]])
 
     for weapon in weapons:
         weapon["price"] = weapon["range"] + weapon["max_durability"]
+        
 
     print(weapons[0])
+    print(fish_stats[0])
 
-    return render_template('shop.html', weapons=weapons)
+    return render_template('shop.html', weapons=weapons, random_fish=fish_stats, user=user)
 
 @app.post('/shop')
 def shop_post():
