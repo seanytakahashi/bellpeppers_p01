@@ -9,7 +9,7 @@ c.executescript("""
 DROP TABLE IF EXISTS fish;
 CREATE TABLE fish (
     scientific_name TEXT UNIQUE PRIMARY KEY,
-    common_name TEXT,
+    scientific_name TEXT,
     status TEXT,
     range INTEGER,
     type TEXT

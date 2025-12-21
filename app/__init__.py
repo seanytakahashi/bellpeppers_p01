@@ -123,8 +123,18 @@ def shop_post():
         fish_sold = request.form.get('fish_name')
         fish_price = request.form.get('fish_price')
 
+        print(fish_sold, fish_price)
 
-    return ""
+        utility.general_query("UPDATE profiles SET balance=balance+? WHERE username=?", [fish_price, session["username"]])
+ 
+        number_owned = utility.general_query("SELECT number_owned FROM fish WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
+        if number_owned[0]['number_owned'] == 1:
+            utility.general_query("DELETE FROM fish WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
+        else:
+            utility.general_query("UPDATE fish SET number_owned=number_owned-1 WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
+
+
+    return redirect(url_for('shop_get'))
 
 if __name__ == '__main__':
     app.run(debug=True)
