@@ -161,12 +161,6 @@ def inject_weapon():
 @app.post('/force_encounter')
 def force_encounter():
   filter = request.form.get('type')
-  print(filter)
-  print(filter)
-  print(filter)
-  print(filter)
-  print(filter)
-  print(filter)
   fishSet = utility.call_api("Species", "/export", [
       ("format", "json"),
       ("distinct", "true"),
