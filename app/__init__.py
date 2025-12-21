@@ -155,7 +155,7 @@ def inject_weapon():
       utility.general_query("UPDATE weapons SET number_owned=number_owned+1 WHERE name=? AND owner=?", [weapon["name"], user['id']])
   else:
       utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
-  flash(f"Added {weapon["name"]} to inventory.", "success")
+  flash(f"Added {weapon['name']} to inventory.", "success")
   return redirect(url_for("cheat_homepage"))
 
 @app.post('/force_encounter')
