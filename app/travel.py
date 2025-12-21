@@ -1,31 +1,32 @@
 import utility
 
 def get_common(key):
-    data = utility.call_api("Countries", "/name/" + key)
+    data = utility.call_api("Countries", "/alpha/" + key)
     common = data[0]['name']['common']
     return common
 
 def get_pop(key):
-    data = utility.call_api("Countries", "/name/" + key)
+    data = utility.call_api("Countries", "/alpha/" + key)
     pop = data[0]['population']
     return pop
 
 def get_list(user):
-    country = utility.get_user(user)["country"]
-    data = utility.call_api("Countries", "/name/" + country)
+    user_data = utility.get_user(user)
+    country_code = user_data["country"]
+    data = utility.call_api("Countries", "/alpha/" + country_code)
     borders = data[0].get('borders', [])
     return borders
 
 def get_common_list(user):
     list = []
-    for country in get_list(user):
-        list.append(get_common(country))
+    for country_code in get_list(user):
+        list.append(get_common(country_code))
     return list
 
 def get_pop_list(user):
     list = []
-    for country in get_list(user):
-        list.append(get_pop(country))
+    for country_code in get_list(user):
+        list.append(get_pop(country_code))
     return list
 
 def make_numbers(p):
@@ -47,17 +48,28 @@ def get_chance_list(user):
     return list
 
 def parse_chance_list(user, species_list):
-    content = []
-    for chances in get_chance_list(user):
+    result = []
+    country_codes = get_list(user)
+    
+    if not country_codes:
+        return []
+    
+    chances_list = get_chance_list(user)
+    
+    for i in range(len(country_codes)):
         cstring = ""
-        for i, chance in enumerate(chances):
-            cstring += species_list[i] + ": " + str(round(chance, 2)) + "%<br>"
-        content.append(cstring)
-    return content
+        for j, chance in enumerate(chances_list[i]):
+            cstring += species_list[j] + ": " + str(round(chance, 2)) + "%<br>"
+        
+        country_code = country_codes[i]
+        country_name = get_common(country_code)
+        result.append((cstring, country_code, country_name))
+    
+    return result
 
 def get_current_country_chances(user, species_list):
-    country = utility.get_user(user)["country"]
-    chances = make_numbers(get_pop(country))
+    country_code = utility.get_user(user)["country"]
+    chances = make_numbers(get_pop(country_code))
     cstring = ""
     for i, chance in enumerate(chances):
         cstring += species_list[i] + ": " + str(round(chance, 2)) + "%<br>"

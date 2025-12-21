@@ -65,18 +65,23 @@ def profile_post():
 @app.get('/travel')
 def travel_get():
     user = session["username"]
-
-    accordion_titles = get_common_list(user)
-    accordion_contents = parse_chance_list(user, utility.species_list)
-    accordion_data = zip(accordion_titles, accordion_contents)
-
+    accordion_data = parse_chance_list(user, utility.species_list)
+    print(f"DEBUG: accordion_data = {accordion_data}")
     current_country_chances = get_current_country_chances(user, utility.species_list)
-
     return render_template(
         'travel.html',
         accordion_data=accordion_data,
         current_country_chances=current_country_chances
     )
+
+@app.post('/travel')
+def travel_post():
+    user = session["username"]
+    new_country_code = request.form["country"]
+    utility.general_query("UPDATE profiles SET country=? WHERE username=?", [new_country_code, user])
+    country_name = request.form.get("country_name", new_country_code)
+    flash(f"You have traveled to {country_name}!", "success")
+    return redirect(url_for("profile_get"))
 
 @app.get('/shop')
 def shop_get():

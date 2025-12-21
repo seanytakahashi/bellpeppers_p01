@@ -9,17 +9,12 @@
 {% extends "base.html" %}
 {% block title %}Travel{% endblock %}
 {% block content %}
-
 <div class="container my-5">
   <div class="row">
-
-    <!-- Accordion -->
     <div class="col-md-8">
       <div id="accordion" class="accordion">
-
-        {% for title, content in accordion_data %}
+        {% for content, country_code, country_name in accordion_data %}
         <div class="card mb-3 shadow-sm border-0">
-
           <div class="card-header bg-white p-0" id="heading{{ loop.index }}">
             <h5 class="mb-0">
               <button
@@ -30,12 +25,11 @@
                 aria-expanded="false"
                 aria-controls="collapse{{ loop.index }}"
               >
-                <span>{{ title }}</span>
+                <span>{{ country_name }}</span>
                 <span>&#9662;</span>
               </button>
             </h5>
           </div>
-
           <div
             id="collapse{{ loop.index }}"
             class="collapse"
@@ -43,30 +37,32 @@
             data-parent="#accordion"
           >
             <div class="card-body bg-light px-4 py-3">
-              {{ content | safe }}
+              <form method="POST" action="/travel">
+                <input type="hidden" name="country" value="{{ country_code }}">
+                <input type="hidden" name="country_name" value="{{ country_name }}">
+                <div class="mb-3">
+                  {{ content | safe }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                  Travel to {{ country_name }}
+                </button>
+              </form>
             </div>
           </div>
-
         </div>
         {% endfor %}
-
       </div>
     </div>
-
-    <!-- Current Country Chances -->
     <div class="col-md-4">
       <div class="card shadow-sm border-0">
         <div class="card-header bg-dark text-white font-weight-bold">
-          Your Country’s Chances
+          Your Country's Chances
         </div>
         <div class="card-body bg-light">
           {{ current_country_chances | safe }}
         </div>
       </div>
     </div>
-
   </div>
 </div>
-
-
 {% endblock %}
