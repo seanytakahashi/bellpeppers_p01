@@ -14,21 +14,23 @@
 
 <div class="mb-4">
   <h3>Your Stats</h3>
-  <p>Current health: <strong>{{ user["health"] }}</strong></p>
-  <p>Current country: <strong>{{ user["country"] }}</strong></p>
-  <p>Current balance: <strong>{{ user["balance"] }}</strong></p>
-  <p>Equipped Weapon: <strong>{{ user["equipped_weapon"] }}</strong></p>
+  Level: <strong>{{ user["level"] }}</strong><br>
+  XP: <strong>{{ user["xp"] }} / 100 </strong><br>
+  Current health: <strong>{{ user["health"] }}</strong><br>
+  Current country: <strong>{{ user["country"] }}</strong><br>
+  Current balance: <strong>{{ user["balance"] }}</strong><br>
+  Equipped Weapon: <strong>{{ user["equipped_weapon"] }}</strong>
 </div>
 
-
-<h3>Fish Owned</h3>
+<h3>Fish Caught</h3>
 {% if all_fish_owned %}
-<div class="card-deck">
+<div class="card-columns">
   {% for fish in all_fish_owned %}
     <div class="card mb-3">
       <div class="card-body">
         <h5 class="card-title">{{ fish["scientific_name"] }}</h5>
         <p class="card-text mb-1">
+          {{fish["status"]}} {{ fish["type"] }}<br>
           Number caught: {{fish["number_caught"]}}<br>
           Number owned: {{fish["number_owned"]}}<br>
           Max health: {{ fish["max_health"] }}<br>

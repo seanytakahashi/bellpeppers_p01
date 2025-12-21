@@ -39,7 +39,7 @@ def get_fish(filter="%"):
             "scientific_name": raw[1]["value"],
             "common_name": raw[0],
             "status": raw[2],
-            "accuracy": min(100, raw[3]),
+            "accuracy": max(60,min(100, raw[3])),
             "type": raw[4]
         }
 

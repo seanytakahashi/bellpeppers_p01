@@ -18,8 +18,8 @@
         <h5 class="card-title">Player</h5>
         <p class="card-text mb-1">Health</p>
         <div class="progress mb-3">
-          <div class="progress-bar bg-success" style="width: {{ user['health'] }}%" role="progressbar">
-            {{ user['health'] }} / 100
+          <div class="progress-bar bg-success" style="width: {{ user['health'] / (100 + user['level'] * 5) * 100 }}%" role="progressbar">
+            {{ user['health'] }} / {{ 100 + user['level'] * 5 }}
           </div>
         </div>
       </div>
@@ -54,6 +54,7 @@
         <h5 class="card-title">{{ fish["common_name"] }}</h5>
         <p class="card-text">
           {{ fish["scientific_name"] }}<br>
+          {{ fish["type"] }}<br>
           {{ fish["status"] }}
         </p>
         <p class="card-text mb-1">Health</p>

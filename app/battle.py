@@ -40,22 +40,27 @@ def get_fish_stats(status):
         "Resolved Taxon": {
             "max_health": 10,
             "damage": "1d4",
+            "xp": 10
         },
         "Species of Concern": {
             "max_health": 20,
             "damage": "1d4",
+            "xp": 20
         },
         "Threatened": {
             "max_health": 25,
             "damage": "1d6",
+            "xp": 25
         },
         "Endangered": {
             "max_health": 30,
             "damage": "1d8",
+            "xp": 50
         },
         "Extinction": {
             "max_health": 30,
-            "damage": "2d10"
+            "damage": "2d10",
+            "xp": 100
         }
     }
     return stats[status]
@@ -118,12 +123,12 @@ def battle_post():
 
     # Player attacks
 
-    miss = random.randint(0, 100) > weapon['accuracy']
+    miss = random.randint(0, 100) > weapon['accuracy'] + user["level"] * 5
     if miss:
         session["battle_log"].append(("You tried to attack but failed!", "warning"))
     else:
         damage_dice = weapon["damage_dice"]
-        damage = roll_dice(damage_dice)
+        damage = roll_dice(damage_dice) + user["level"]
 
         if fish["health"] <= damage:
             existing = utility.general_query("SELECT * FROM fish WHERE owner=? AND scientific_name=?", [user["id"], fish["scientific_name"]])
@@ -132,7 +137,14 @@ def battle_post():
             else:
                 utility.insert_query("fish", {"scientific_name": fish["scientific_name"], "owner": user["id"]})
 
-            flash("You won the battle and caught this fish!", "success")
+            xp_gain = fish['xp'] + random.randint(1, 10)
+            if (user['xp'] + xp_gain) > 100:
+                flash("You leveled up, restoring you back to max HP!", "success")
+                utility.general_query("UPDATE profiles SET health=100+(level+1)*5, level=level+1, xp=? WHERE rowid=?", [(user['xp'] + xp_gain) % 100, user["id"]])
+            else:
+                utility.general_query("UPDATE profiles SET xp=xp+? WHERE rowid=?", [xp_gain, user["id"]])
+
+            flash(f"You won the battle and gained {xp_gain} xp!", "success")
             return redirect(url_for("profile_get"))
 
         fish["health"] -= damage
@@ -147,6 +159,9 @@ def battle_post():
         damage = roll_dice(damage_dice)
 
         if user["health"] <= damage:
+            if user["level"] > 1:
+                utility.general_query("UPDATE profiles SET level=level-1 WHERE username=?", [session['username']])
+
             utility.general_query("UPDATE profiles SET balance=balance-50, health=100 WHERE username=?", [session["username"]])
             flash("You died and had to pay 50 coins to recover!", "danger")
             return redirect(url_for("profile_get"))
