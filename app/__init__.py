@@ -133,5 +133,29 @@ def buy_weapon():
 
     return redirect(url_for('shop_get'))
 
+@app.post('/buy_potion')
+def buy_potion():
+    user = utility.get_user(session["username"])
+
+    if "potion_type" in request.form:
+        potion_type = request.form.get('potion_type')
+        if potion_type == "basic":
+            utility.general_query("UPDATE profiles SET balance=balance-10 WHERE username=?", [session["username"]])
+            utility.general_query("UPDATE profiles SET health=health+10 WHERE username=?", [session["username"]])
+        elif potion_type == "super":
+            utility.general_query("UPDATE profiles SET balance=balance-40 WHERE username=?", [session["username"]])
+            utility.general_query("UPDATE profiles SET health=health+50 WHERE username=?", [session["username"]])
+        elif potion_type == "hyper":
+            utility.general_query("UPDATE profiles SET balance=balance-100 WHERE username=?", [session["username"]])
+            utility.general_query("UPDATE profiles SET health=health+120 WHERE username=?", [session["username"]])
+        elif potion_type == "max":
+            level = utility.general_query("SELECT level FROM profiles WHERE username=?", [session["username"]])[0]["level"]
+            health = 100 + 5 * level
+
+            utility.general_query("UPDATE profiles SET balance=balance-300 WHERE username=?", [session["username"]])
+            utility.general_query("UPDATE profiles SET health=? WHERE username=?", [health, session["username"]])
+
+    return redirect(url_for('shop_get'))
+
 if __name__ == '__main__':
     app.run(debug=True)

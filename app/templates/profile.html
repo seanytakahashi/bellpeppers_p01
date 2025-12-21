@@ -24,7 +24,7 @@
 
 <h3>Fish Caught</h3>
 {% if all_fish_owned %}
-<div class="card-columns">
+<div class="card-deck">
   {% for fish in all_fish_owned %}
     <div class="card mb-3">
       <div class="card-body">
@@ -47,7 +47,7 @@
 
 <h3>Weapons Owned</h3>
 {% if all_weapons_owned %}
-<div class="card-columns">
+<div class="card-deck">
   {% for weapons in all_weapons_owned %}
   <div class="card mb-3">
     <div class="card-body">

@@ -42,7 +42,85 @@
       {% endfor %}
   </div>
 {% endfor %}
+<br>
 
+<h3 class="col-md-9 mx-auto text-center">Potions</h3>
+
+<p>The local apothecary is offering the following potions for sale...</p>
+
+<div class="card-deck">
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Potion</h5>
+      <p class="card-text">
+        Restores 10 HP<br>
+        <form action="{{ url_for('buy_potion') }}" method="POST">
+          <input type="hidden" name="potion_type" value="basic">
+          {% if user["balance"] < 10 %}
+            <button type="submit" class="btn btn-warning text-danger" title="Not enough gold!" disabled>10 Gold</button>
+          {% else %}
+            <button type="submit" class="btn btn-warning">10 Gold</button>
+          {% endif %}
+        </form>
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Super Potion</h5>
+      <p class="card-text">
+        Restores 50 HP<br>
+        <form action="{{ url_for('buy_potion') }}" method="POST">
+          <input type="hidden" name="potion_type" value="super">
+          {% if user["balance"] < 40 %}
+            <button type="submit" class="btn btn-warning text-danger" title="Not enough gold!" disabled>40 Gold</button>
+          {% else %}
+            <button type="submit" class="btn btn-warning">40 Gold</button>
+          {% endif %}
+        </form>
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Hyper Potion</h5>
+      <p class="card-text">
+        Restores 120 HP<br>
+        <form action="{{ url_for('buy_potion') }}" method="POST">
+          <input type="hidden" name="potion_type" value="hyper">
+          {% if user["balance"] < 100 %}
+            <button type="submit" class="btn btn-warning text-danger" title="Not enough gold!" disabled>100 Gold</button>
+          {% else %}
+            <button type="submit" class="btn btn-warning">100 Gold</button>
+          {% endif %}
+        </form>
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Max Potion</h5>
+      <p class="card-text">
+        Restores full HP<br>
+        <form action="{{ url_for('buy_potion') }}" method="POST">
+          <input type="hidden" name="potion_type" value="max">
+          {% if user["balance"] < 300 %}
+            <button type="submit" class="btn btn-warning text-danger" title="Not enough gold!" disabled>300 Gold</button>
+          {% else %}
+            <button type="submit" class="btn btn-warning">300 Gold</button>
+          {% endif %}
+        </form>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<br>
 
 <h3 class="col-md-9 mx-auto text-center">Fish</h3>
 
