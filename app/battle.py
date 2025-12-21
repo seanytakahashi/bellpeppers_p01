@@ -5,8 +5,7 @@
 # 2025-12-22m
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from utility import *
-from fish import get_fish
+import utility
 import random
 
 bp = Blueprint('battle', __name__, url_prefix='/battle')
@@ -19,8 +18,8 @@ def roll_dice(dice):
     return output
 
 def get_random_weapon():
-    all_weapons = call_api("Dnd", "/api/2014/equipment-categories/simple-weapons")["equipment"]
-    raw = call_api("Dnd", random.choice(all_weapons)["url"])
+    all_weapons = utility.call_api("Dnd", "/api/2014/equipment-categories/simple-weapons")["equipment"]
+    raw = utility.call_api("Dnd", random.choice(all_weapons)["url"])
 
     weapon = {
         "name": raw["name"],
@@ -30,7 +29,7 @@ def get_random_weapon():
         "range": raw["range"]["normal"]
     }
 
-    cache_entry("weapons", weapon)
+    utility.cache_entry("weapons", weapon)
     return weapon
 
 def get_fish_stats(status):
@@ -68,8 +67,8 @@ def initialize_fish(fish):
     return fish
 
 def initialize_weapon(name, user):
-    item = general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [name, user])[0]
-    weapon = pull_cache("weapons", ("name", name))
+    item = utility.general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [name, user])[0]
+    weapon = utility.pull_cache("weapons", ("name", name))
 
     weapon["durability"] = item['durability']
     weapon["number_owned"] = item["number_owned"]
@@ -81,10 +80,10 @@ def initialize_weapon(name, user):
 @bp.get('/')
 def battle_get():
     scientific_name = request.args["fish"]
-    raw = pull_cache("fish", ("scientific_name", scientific_name))
+    raw = utility.pull_cache("fish", ("scientific_name", scientific_name))
     fish = initialize_fish(raw)
 
-    user = get_user(session['username'])
+    user = utility.get_user(session['username'])
 
     session["battle_log"] = [("You're starting a battle!", "success")]
 
@@ -99,11 +98,11 @@ def battle_get():
 @bp.post('/')
 def battle_post():
     scientific_name = request.form["fish_species"]
-    raw = pull_cache("fish", ("scientific_name", scientific_name))
+    raw = utility.pull_cache("fish", ("scientific_name", scientific_name))
     fish = initialize_fish(raw)
     fish["stats"]["health"] = int(request.form["fish_health"])
 
-    user = get_user(session['username'])
+    user = utility.get_user(session['username'])
     weapon = initialize_weapon(user['equipped_weapon'], user["id"])
 
     print(weapon)
@@ -116,54 +115,54 @@ def battle_post():
     if (weapon["durability"] == 0):
         if (weapon["number_owned"] == 1):
             flash("Your weapon broke and you fled the battle!", "danger")
-            general_query("UPDATE profiles SET equipped_weapon=NULL WHERE id=?", [user["id"]])
-            general_query("DELETE FROM weapons WHERE name=? AND owner=?", [weapon["name"], user["id"]])
+            utility.general_query("UPDATE profiles SET equipped_weapon=NULL WHERE id=?", [user["id"]])
+            utility.general_query("DELETE FROM weapons WHERE name=? AND owner=?", [weapon["name"], user["id"]])
             return redirect(url_for('profile_get'))
         else:
             weapon["number_owned"] -= 1
-            general_query("UPDATE weapons SET number_owned=number_owned-1, durability=? WHERE name=? AND owner=?", [weapon["max_durability"], weapon["name"], user["id"]])
+            utility.general_query("UPDATE weapons SET number_owned=number_owned-1, durability=? WHERE name=? AND owner=?", [weapon["max_durability"], weapon["name"], user["id"]])
     else:
-        general_query("UPDATE weapons SET durability=durability-1 WHERE name=? AND owner=?", [weapon["name"], user["id"]])
+        utility.general_query("UPDATE weapons SET durability=durability-1 WHERE name=? AND owner=?", [weapon["name"], user["id"]])
 
     # Player attacks
 
     miss = random.randint(0, 100) > weapon['accuracy']
     if miss:
-        session["battle_log"].extend([("You tried to attack but failed!", "warning")])
+        session["battle_log"].append(("You tried to attack but failed!", "warning"))
     else:
         damage_dice = weapon["damage_dice"]
         damage = roll_dice(damage_dice)
 
         if fish["stats"]["health"] <= damage:
-            existing = general_query("SELECT * FROM fish WHERE owner=? AND scientific_name=?", [user["id"], fish["scientific_name"]])
+            existing = utility.general_query("SELECT * FROM fish WHERE owner=? AND scientific_name=?", [user["id"], fish["scientific_name"]])
             if len(existing) > 0:
-                general_query("UPDATE fish SET number_caught=number_caught+1, number_owned=number_owned+1 WHERE scientific_name=? AND owner=?", [fish["scientific_name"], user["id"]])
+                utility.general_query("UPDATE fish SET number_caught=number_caught+1, number_owned=number_owned+1 WHERE scientific_name=? AND owner=?", [fish["scientific_name"], user["id"]])
             else:
-                insert_query("fish", {"scientific_name": fish["scientific_name"], "owner": user["id"]})
+                utility.insert_query("fish", {"scientific_name": fish["scientific_name"], "owner": user["id"]})
 
             flash("You won the battle and caught this fish!", "success")
             return redirect(url_for("profile_get"))
 
         fish["stats"]["health"] -= damage
-        session["battle_log"].extend([(f"You attacked for {damage} damage!", "success")])
+        session["battle_log"].append((f"You attacked for {damage} damage!", "success"))
 
     # Fish attacks
     miss = random.randint(0, 100) > fish['stats']['accuracy']
     if miss:
-        session["battle_log"].extend([("The fish tried to attack you but missed!", "warning")])
+        session["battle_log"].append(("The fish tried to attack you but missed!", "warning"))
     else:
         damage_dice = fish["stats"]["damage"]
         damage = roll_dice(damage_dice)
 
         if user["health"] <= damage:
-            general_query("UPDATE profiles SET balance=balance-50, health=100 WHERE username=?", [session["username"]])
+            utility.general_query("UPDATE profiles SET balance=balance-50, health=100 WHERE username=?", [session["username"]])
             flash("You died and had to pay 50 coins to recover!", "danger")
             return redirect(url_for("profile_get"))
 
-        general_query("UPDATE profiles SET health=health-? WHERE username=?", [damage, session["username"]])
+        utility.general_query("UPDATE profiles SET health=health-? WHERE username=?", [damage, session["username"]])
 
         user["health"] -= damage
-        session["battle_log"].extend([(f"You were attacked for {damage} damage!", "danger")])
+        session["battle_log"].append((f"You were attacked for {damage} damage!", "danger"))
 
     flash("")
     return render_template("battle.html", fish=fish, weapon=weapon, user=user)

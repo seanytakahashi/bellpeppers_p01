@@ -105,8 +105,6 @@ def shop_get():
     for weapon in weapons:
         weapon["price"] = weapon["range"] + weapon["max_durability"]
 
-    print(weapons[0])
-
     return render_template('shop.html', weapons=weapons, random_fish=fish_stats, user=user)
 
 @app.post('/shop')
