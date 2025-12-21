@@ -107,39 +107,40 @@ def shop_get():
 
     return render_template('shop.html', weapons=weapons, random_fish=fish_stats, user=user)
 
-@app.post('/shop')
-def shop_post():
-    form_type = request.form.get('form_type')
+@app.post('/sell_fish')
+def sell_fish():
+    user = utility.get_user(session["username"])
+    
+    fish_sold = request.form.get('fish_name')
+    fish_price = request.form.get('fish_price')
+
+    utility.general_query("UPDATE profiles SET balance=balance+? WHERE username=?", [fish_price, session["username"]])
+
+    number_owned = utility.general_query("SELECT number_owned FROM fish WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
+    if number_owned[0]['number_owned'] == 1:
+        utility.general_query("DELETE FROM fish WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
+    else:
+        utility.general_query("UPDATE fish SET number_owned=number_owned-1 WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
+    
+    return redirect(url_for('shop_get'))
+
+@app.post('/buy_weapon')
+def buy_weapon():
     user = utility.get_user(session["username"])
 
-    if form_type == "weapon_name":
+    if "weapon_name" in request.form:
         weapon_bought = request.form.get('weapon_name')
         weapon_price = request.form.get('weapon_price')
 
-        weapon = utility.pull_cache("SELECT * FROM weapons WHERE name=?", [weapon_bought])
-
-        utility.general_query("UPDATE profiles SET balance=balance-? WHERE user=?", [weapon_price, user['id']])
+        weapon = utility.pull_cache("weapons", ("name", weapon_bought))
+        
+        utility.general_query("UPDATE profiles SET balance=balance-? WHERE rowid=?", [weapon_price, user['id']])
 
         result = utility.general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [weapon['name'], user["id"]])
         if len(result) != 0:
             utility.general_query("UPDATE weapons SET number_owned=number_owned+1 WHERE name=? AND owner=?", [weapon["name"], user['id']])
         else:
             utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
-
-    elif form_type == "fish_name":
-        fish_sold = request.form.get('fish_name')
-        fish_price = request.form.get('fish_price')
-
-        print(fish_sold, fish_price)
-
-        utility.general_query("UPDATE profiles SET balance=balance+? WHERE username=?", [fish_price, session["username"]])
- 
-        number_owned = utility.general_query("SELECT number_owned FROM fish WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
-        if number_owned[0]['number_owned'] == 1:
-            utility.general_query("DELETE FROM fish WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
-        else:
-            utility.general_query("UPDATE fish SET number_owned=number_owned-1 WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
-
 
     return redirect(url_for('shop_get'))
 

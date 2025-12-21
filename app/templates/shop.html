@@ -27,7 +27,7 @@
               Damage: {{ weapons[j * 3 + i]['damage_dice'] }}<br>
               Durability: {{ weapons[j * 3 + i]['max_durability'] }}<br>
               Accuracy: {{ weapons[j * 3 + i]['range'] }}<br>
-              <form action="{{ url_for('shop_post') }}" method="POST">
+              <form action="{{ url_for('buy_weapon') }}" method="POST">
                 <input type="hidden" name="weapon_name" value="{{ weapons[j * 3 + i]['name'] }}">
                 <input type="hidden" name="weapon_price" value="{{ weapons[j * 3 + i]['price'] }}">
                 {% if user["balance"] < weapons[j * 3 + i]['price'] %}
@@ -56,7 +56,7 @@
         <h5 class="card-title">{{ fish[0]["scientific_name"] }}</h5>
         <p class="card-text">
           Number owned: {{ fish[1] }}<br>
-          <form action="{{ url_for('shop_post') }}" method="POST">
+          <form action="{{ url_for('sell_fish') }}" method="POST">
             <input type="hidden" name="fish_name" value="{{ fish[0]['scientific_name'] }}">
             <input type="hidden" name="fish_price" value="{{ fish[2] }}">
             <button type="submit" class="btn btn-warning">{{ fish[2] }} Gold</button>
