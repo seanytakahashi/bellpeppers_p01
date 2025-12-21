@@ -6,6 +6,7 @@
 
 from flask import Flask, render_template, request, flash, url_for, redirect, session
 import utility
+import random
 from travel import *
 
 app = Flask(__name__)
@@ -133,29 +134,68 @@ def buy_weapon():
 
     return redirect(url_for('shop_get'))
 
-@app.post('/buy_potion')
-def buy_potion():
-    user = utility.get_user(session["username"])
+@app.get('/inject')
+def cheat_homepage():
+  return render_template('inject.html', user=utility.get_user(session['username']))
 
-    if "potion_type" in request.form:
-        potion_type = request.form.get('potion_type')
-        if potion_type == "basic":
-            utility.general_query("UPDATE profiles SET balance=balance-10 WHERE username=?", [session["username"]])
-            utility.general_query("UPDATE profiles SET health=health+10 WHERE username=?", [session["username"]])
-        elif potion_type == "super":
-            utility.general_query("UPDATE profiles SET balance=balance-40 WHERE username=?", [session["username"]])
-            utility.general_query("UPDATE profiles SET health=health+50 WHERE username=?", [session["username"]])
-        elif potion_type == "hyper":
-            utility.general_query("UPDATE profiles SET balance=balance-100 WHERE username=?", [session["username"]])
-            utility.general_query("UPDATE profiles SET health=health+120 WHERE username=?", [session["username"]])
-        elif potion_type == "max":
-            level = utility.general_query("SELECT level FROM profiles WHERE username=?", [session["username"]])[0]["level"]
-            health = 100 + 5 * level
+@app.post('/inject_currency')
+def inject_money():
+  cost = request.form.get('amount')
+  print(cost)
+  utility.general_query("UPDATE profiles SET balance=balance+? WHERE username=?", [cost, session["username"]])
+  flash(f"Gained {cost} gold.", "success")
+  return redirect(url_for("cheat_homepage"))
 
-            utility.general_query("UPDATE profiles SET balance=balance-300 WHERE username=?", [session["username"]])
-            utility.general_query("UPDATE profiles SET health=? WHERE username=?", [health, session["username"]])
+@app.post('/inject_weapon')
+def inject_weapon():
+  user = utility.get_user(session["username"])
+  weapon = utility.query_cache("SELECT * FROM weapons ORDER BY random() LIMIT 1")[0]
+  result = utility.general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [weapon['name'], user["id"]])
+  if len(result) != 0:
+      utility.general_query("UPDATE weapons SET number_owned=number_owned+1 WHERE name=? AND owner=?", [weapon["name"], user['id']])
+  else:
+      utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
+  flash(f"Added {weapon["name"]} to inventory.", "success")
+  return redirect(url_for("cheat_homepage"))
 
-    return redirect(url_for('shop_get'))
+@app.post('/force_encounter')
+def force_encounter():
+  filter = request.form.get('type')
+  print(filter)
+  print(filter)
+  print(filter)
+  print(filter)
+  print(filter)
+  print(filter)
+  fishSet = utility.call_api("Species", "/export", [
+      ("format", "json"),
+      ("distinct", "true"),
+      ("columns", "/species@cn,sn,status,range_envelope,gn"),
+      ("sort", "/species@cn asc;/species@sn asc"),
+      ("filter", "/species@cn not like '%no common name%'"),
+      ("filter", "/species@cn not like '%unnamed%'"),
+      ("filter", "/species@range_envelope is not null"),
+      ("filter", "/species@gn != 'Algae'"),
+      ("filter", "/species@gn != 'Conifers and Cycads'"),
+      ("filter", "/species@gn != 'Ferns and Allies'"),
+      ("filter", "/species@gn != 'Flowering Plants'"),
+      ("filter", "/species@gn != 'Lichens'"),
+      ("filter", f"/species@status in ('{filter}')"),
+  ])["data"]
 
+  for fish in fishSet:
+      fish[3] = utility.find_area(fish[3][9:-2])
+  
+  raw = random.choice(fishSet)
+  fish = {
+      "scientific_name": raw[1]["value"],
+      "common_name": raw[0],
+      "status": raw[2],
+      "accuracy": max(60,min(100, raw[3])),
+      "type": raw[4]
+  }
+  utility.cache_entry("fish", fish)
+  return redirect(url_for('battle.battle_get', fish=fish["scientific_name"]))
+  
 if __name__ == '__main__':
     app.run(debug=True)

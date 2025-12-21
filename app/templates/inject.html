@@ -1,0 +1,39 @@
+<!--
+ Sean Takahashi, Ivan Chen, James Lei, Eviss Wu
+ Bell Peppers
+ SoftDev
+ P01
+ 2025-12-22m
+-->
+
+{% extends "base.html" %}
+{% block title %}Cheat Page{% endblock %}
+{% block content %}
+<h1 class="col-md-9 mx-auto text-center">Demo - Cheat Page</h1>
+<h4> Current balance: <strong>{{ user["balance"] }} Gold</strong></h4>
+
+<form action="{{ url_for('inject_money')}}" method="POST">
+  <input type="hidden" name="amount" value="100">
+  <button type="submit" class="btn btn-warning">+100 Gold</button>
+</form><br>
+<form action="{{ url_for('inject_money')}}" method="POST">
+  <input type="hidden" name="amount" value="500">
+  <button type="submit" class="btn btn-warning">+500 Gold</button>
+</form><br>
+<form action="{{ url_for('inject_money')}}" method="POST">
+  <input type="hidden" name="amount" value="1000">
+  <button type="submit" class="btn btn-warning">+1000 Gold</button>
+</form><br>
+<form action="{{ url_for('inject_weapon')}}" method="POST">
+  <button type="submit" class="btn btn-warning">Give Random Weapon</button>
+</form><br>
+<form action="{{ url_for('force_encounter')}}" method="POST">
+  <input type="hidden" name="type" value="Endangered">
+  <button type="submit" class="btn btn-warning">Force Encounter - Endangered</button>
+</form><br>
+<form action="{{ url_for('force_encounter')}}" method="POST">
+  <input type="hidden" name="type" value="Extinction">
+  <button type="submit" class="btn btn-warning">Force Encounter - Extinct</button>
+</form><br>
+
+{% endblock %}
