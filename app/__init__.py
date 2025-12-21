@@ -5,7 +5,6 @@
 # 2025-12-22m
 
 from flask import Flask, render_template, request, flash, url_for, redirect, session
-import sqlite3
 import utility
 from travel import *
 
@@ -24,6 +23,11 @@ def check_authentification():
     if 'username' not in session.keys() and request.blueprint != 'auth':
         flash("Please log in to view our website", "danger")
         return redirect(url_for("auth.login_get"))
+    elif 'username' in session.keys():
+        user = utility.get_user(session['username'])
+        if user is None:
+            session.pop('username', None)
+            return redirect(url_for("auth.login_get"))
 
 @app.get('/')
 def home_get():
