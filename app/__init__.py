@@ -112,6 +112,8 @@ def sell_fish():
     utility.general_query("UPDATE profiles SET balance=balance+? WHERE username=?", [fish_price, session["username"]])
     utility.general_query("UPDATE fish SET number_owned=number_owned-1 WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
     
+    flash(f"You have sold {fish_sold}!", "success")
+
     return redirect(url_for('shop_get'))
 
 @app.post('/buy_weapon')
@@ -131,6 +133,8 @@ def buy_weapon():
             utility.general_query("UPDATE weapons SET number_owned=number_owned+1 WHERE name=? AND owner=?", [weapon["name"], user['id']])
         else:
             utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
+
+    flash(f"You have purchased {weapon_bought}!", "success")
 
     return redirect(url_for('shop_get'))
 
