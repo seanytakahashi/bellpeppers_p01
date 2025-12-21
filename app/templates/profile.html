@@ -10,7 +10,6 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
 
-
 <h1 class="text-center pb-4">Welcome, <strong>{{ session["username"] }}</strong>!</h1>
 
 <div class="mb-4">
@@ -24,15 +23,17 @@
 
 <h3>Fish Owned</h3>
 {% if all_fish_owned %}
-<div class="card-columns">
+<div class="card-deck">
   {% for fish in all_fish_owned %}
     <div class="card mb-3">
       <div class="card-body">
-        <h5 class="card-title">{{ fish[0]["scientific_name"] }}</h5>
+        <h5 class="card-title">{{ fish["scientific_name"] }}</h5>
         <p class="card-text mb-1">
-          Number owned: {{fish[1]}}<br>
-          Max health: {{ fish[0]["stats"]["health"] }}<br>
-          Accuracy: {{ fish[0]["stats"]["accuracy"] }}
+          Number caught: {{fish["number_caught"]}}<br>
+          Number owned: {{fish["number_owned"]}}<br>
+          Max health: {{ fish["max_health"] }}<br>
+          Accuracy: {{ fish["accuracy"] }}<br>
+          Damage: {{ fish["damage"] }}
         </p>
       </div>
     </div>
@@ -42,35 +43,26 @@
   <p>No fish owned</p>
 {% endif %}
 
-
 <h3>Weapons Owned</h3>
 {% if all_weapons_owned %}
 <div class="card-columns">
   {% for weapons in all_weapons_owned %}
-    {% if weapons["name"] != user["equipped_weapon"] %}
-      <form action="{{ url_for('profile_post') }}" method="POST">
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">{{weapons["name"]}}</h5>
-            <p class="card-text mb-1">
-              Number owned: {{weapons["number_owned"]}}<br>
-              Durability: {{weapons["durability"]}}<br>
-              <button type="submit" value="{{weapons['name']}}" name="weapon" class="btn btn-primary">Equip</button>
-            </p>
-          </div>
-        </div>
-      </form>
-    {% else %}
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">{{weapons["name"]}}</h5>
-          <p class="card-text mb-1">
-            Number owned: {{weapons["number_owned"]}}<br>
-            Durability: {{weapons["durability"]}}
-          </p>
-        </div>
-      </div>
-    {% endif %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{weapons["name"]}}</h5>
+      <p class="card-text mb-1">
+        Number owned: {{weapons["number_owned"]}}<br>
+        Durability: {{weapons["durability"]}}<br>
+        Accuracy: {{weapons["accuracy"]}}<br>
+        Damage: {{weapons["damage_dice"]}}
+        {% if weapons["name"] != user["equipped_weapon"] %}
+        <form action="{{ url_for('profile_post') }}" method="POST">
+          <button type="submit" value="{{weapons['name']}}" name="weapon" class="mt-2 btn btn-primary">Equip</button>
+        </form>
+        {% endif %}
+      </p>
+    </div>
+  </div>
   {% endfor %}
 </div>
 {% else %}

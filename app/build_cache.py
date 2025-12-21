@@ -19,7 +19,7 @@ CREATE TABLE fish (
     scientific_name TEXT UNIQUE PRIMARY KEY,
     common_name TEXT,
     status TEXT,
-    range INTEGER,
+    accuracy INTEGER,
     type TEXT
 );""")
 
@@ -28,9 +28,8 @@ DROP TABLE IF EXISTS weapons;
 CREATE TABLE weapons (
     name TEXT UNIQUE PRIMARY KEY,
     damage_dice STRING,
-    damage_type TEXT,
     max_durability INTEGER,
-    range INTEGER
+    accuracy INTEGER
 );""")
 
 db.commit()
@@ -44,9 +43,8 @@ try:
         weapon = {
             "name": raw["name"],
             "damage_dice": raw["damage"]["damage_dice"],
-            "damage_type": raw["damage"]["damage_type"]["name"],
             "max_durability": max(raw["weight"], 1) * 10,
-            "range": raw["range"]["normal"]
+            "accuracy": min(100, raw["range"]["normal"] * 10)
         }
         utility.cache_entry("weapons", weapon)
 

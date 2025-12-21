@@ -6,6 +6,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+import battle
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -30,6 +31,12 @@ def signup_post():
     if not row:
         hashed_pswd = generate_password_hash(password)
         utility.insert_query("profiles", ({"username": username, "password": hashed_pswd}))
+        user = utility.get_user(username)
+
+        weapon = battle.get_random_weapon()
+        utility.general_query("UPDATE profiles SET equipped_weapon=? WHERE username=?", [weapon['name'], username])
+        utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
+        
         flash('Signup successful!', 'success')
         session['username'] = username
         return redirect(url_for('profile_get'))

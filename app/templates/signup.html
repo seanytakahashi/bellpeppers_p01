@@ -10,6 +10,8 @@
 {% block title %}Create Account{% endblock %}
 {% block content %}
 
+<h1 class="col-md-9 mx-auto text-center">Create Account</h1>
+
 <p>To register a new account, please input a <strong> username</strong> and <i>strong</i> <strong>password</strong> combination below!</p>
 
 <form action="{{ url_for('auth.signup_post') }}" method="POST">

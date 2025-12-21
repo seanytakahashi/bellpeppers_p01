@@ -7,21 +7,13 @@
 import utility
 import battle
 import random
-import time
 import travel
-import signal
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, redirect, url_for, session, flash
 
 bp = Blueprint('fish', __name__, url_prefix='/fish')
 
-def sighandler(signal, frame): # this is for timeouts
-    raise Exception("timeout")
-
 def get_fish(filter="%"):
-    # print(filter)
     try:
-        # signal.signal(signal.SIGARLM, sighandler)
-        # signal.alarm(5)
         fishSet = utility.call_api("Species", "/export", [
             ("format", "json"),
             ("distinct", "true"),
@@ -38,38 +30,45 @@ def get_fish(filter="%"):
             ("filter", "/species@status in ('Resolved Taxon','Species of Concern','Threatened','Endangered','Extinction')"),
             ("filter", f"/species@gn like '{filter}'")
         ])["data"]
-        # x = 0
+
         for fish in fishSet:
-            # x += 1
-            try:
-                fish[3] = utility.find_area(fish[3][9:-2])
-            except:
-                print(fish[0])
-                print(fish[3])
+            fish[3] = utility.find_area(fish[3][9:-2])
+        
         raw = random.choice(fishSet)
         fish = {
             "scientific_name": raw[1]["value"],
             "common_name": raw[0],
             "status": raw[2],
-            "range": raw[3],
+            "accuracy": min(100, raw[3]),
             "type": raw[4]
         }
+
         utility.cache_entry("fish", fish)
-    except:
-        print("pulling from cache")
-        fish = utility.general_query("SELECT * FROM fish ORDER BY random() LIMIT 1;")[0]
-        print(fish)
+    except Exception:
+        fish = utility.query_cache("SELECT * FROM fish ORDER BY random() LIMIT 1;")[0]
+    
     return fish
-# print(get_fish("'Fishes'"))
+
+def catch_weapon():
+    weapon = battle.get_random_weapon()
+    user = utility.get_user(session["username"])
+
+    result = utility.general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [weapon['name'], user["id"]])
+
+    if len(result) != 0:
+        utility.general_query("UPDATE weapons SET number_owned=number_owned+1 WHERE name=? AND owner=?", [weapon["name"], user['id']])
+    else:
+        utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
+
+    flash(f"You caught a {weapon['name']}!", "success")
+    return redirect(url_for('profile_get'))
 
 @bp.get("/")
 def fish_get():
     chance = random.randint(1, 100)
-    print(chance)
     if (chance > 85): # treasure chance: ~15%
-        print("treasure caught. debug console message")
         if (chance > 95):
-            return redirect(url_for("fish.catch_weapon_get"))
+            return catch_weapon()
         else:
             cost = random.randint(40,100)
             utility.general_query("UPDATE profiles SET balance = balance + ? WHERE username=?", [cost, session["username"]])
@@ -81,28 +80,5 @@ def fish_get():
         list.pop()
         for pair in list:
             keyset.append(float(pair.split(": ")[1]))
-        # print(keyset)
-        # print(utility.species_list)
         fish = get_fish(filter=random.choices(utility.species_list,weights=keyset)[0])
-        # fish = get_fish()
         return redirect(url_for('battle.battle_get', fish=fish["scientific_name"]))
-
-
-# TESTING
-@bp.get("catch_weapon")
-def catch_weapon_get():
-    weapon = battle.get_random_weapon()
-    user = utility.get_user(session["username"])
-
-    # Adds to inventory but not auto equipped
-    result = utility.general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [weapon['name'], user["id"]])
-
-    if len(result) != 0:
-        utility.general_query("UPDATE weapons SET number_owned=number_owned+1 WHERE name=? AND owner=?", [weapon["name"], user['id']])
-    else:
-        utility.insert_query("weapons", {"name": weapon['name'], "owner": user['id'], "durability": weapon['max_durability']})
-
-    flash(f"You caught a {weapon['name']}!", "success")
-    return redirect(url_for('profile_get'))
-
-# print(get_fish())

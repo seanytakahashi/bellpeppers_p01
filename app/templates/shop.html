@@ -26,7 +26,7 @@
             <p class="card-text">
               Damage: {{ weapons[j * 3 + i]['damage_dice'] }}<br>
               Durability: {{ weapons[j * 3 + i]['max_durability'] }}<br>
-              Accuracy: {{ weapons[j * 3 + i]['range'] }}<br>
+              Accuracy: {{ weapons[j * 3 + i]['accuracy'] }}<br>
               <form action="{{ url_for('buy_weapon') }}" method="POST">
                 <input type="hidden" name="weapon_name" value="{{ weapons[j * 3 + i]['name'] }}">
                 <input type="hidden" name="weapon_price" value="{{ weapons[j * 3 + i]['price'] }}">

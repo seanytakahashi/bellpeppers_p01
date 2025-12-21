@@ -5,10 +5,10 @@
 # 2025-12-22m
 
 import sqlite3
-import urllib.request
-import urllib.parse
+import urllib.parse, urllib.error, urllib.request
 import json
 import ssl
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 DB_FILE = "data.db"
@@ -89,8 +89,13 @@ def call_api(api_name, path, params=[]):
         case "Countries":
             path = "https://restcountries.com/v3.1" + path
     path += '?' + urllib.parse.urlencode(params)
-    with urllib.request.urlopen(path) as response:
-        data = response.read()
+    
+    try:
+        with urllib.request.urlopen(path, timeout=10) as response:
+            data = response.read()
+    except urllib.error.URLError:
+        raise Exception("API Call Error")
+    
     return json.loads(data)
 
 def find_area(polygon):
@@ -112,15 +117,3 @@ def find_area(polygon):
     sum1 += (float(pair1[0])*float(firstpair[1]))
     sum2 += (float(pair1[1])*float(firstpair[0]))
     return (int)(0.5 * abs(sum1-sum2))
-
-# insert_query("profiles", {"username": "Testing", "password": "Testing"})
-# print(general_query("SELECT * FROM profiles WHERE username=?", ["test"]))
-# print(call_api("Dnd", "/equipment-categories/simple-weapons")["index"])
-
-# print(call_api("Species", "/export", {
-#     "format": "json",
-#     "columns": "/species@cn,sn,status,range_envelope,gn",
-#     "sort": "/species@cn asc;/species@sn asc",
-#     "filter": "/species@range_envelope is not null",
-#     "filter": "/species@status not in ('Experimental Population, Non-Essential')"
-# })["data"][0])

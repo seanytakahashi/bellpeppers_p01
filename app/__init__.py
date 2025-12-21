@@ -20,7 +20,7 @@ app.register_blueprint(fish.bp)
 
 @app.before_request
 def check_authentification():
-    if 'username' not in session.keys() and request.blueprint != 'auth':
+    if 'username' not in session.keys() and request.blueprint != 'auth' and request.path != '/':
         flash("Please log in to view our website", "danger")
         return redirect(url_for("auth.login_get"))
     elif 'username' in session.keys():
@@ -37,21 +37,18 @@ def home_get():
 def profile_get():
     user = utility.get_user(session["username"])
 
-    all_fish_owned = utility.general_query("SELECT scientific_name, number_owned FROM fish WHERE owner=?;", [user["id"]])
-    all_weapons_owned = utility.general_query("SELECT name FROM weapons WHERE owner=?;", [user["id"]])
+    fish = utility.general_query("SELECT * FROM fish WHERE owner=?;", [user["id"]])
+    weapons = utility.general_query("SELECT name FROM weapons WHERE owner=?;", [user["id"]])
 
-    fish_stats = []
-    weapons_stats = []
+    for single_fish in fish:
+        stats = battle.initialize_fish(single_fish["scientific_name"])
+        for key in stats:
+            single_fish[key] = stats[key]
 
-    for fish in all_fish_owned:
-        raw = utility.pull_cache("fish", ("scientific_name", fish["scientific_name"]))
-        # 0 index: fish data including health and accuracy; 1 index: number owned
-        fish_stats.append([battle.initialize_fish(raw), fish["number_owned"]])
+    for i in range(len(weapons)):
+        weapons[i] = battle.initialize_weapon(weapons[i]["name"], user["id"])
 
-    for weapon in all_weapons_owned:
-        weapons_stats.append(battle.initialize_weapon(weapon["name"], user["id"]))
-
-    return render_template('profile.html', user=user, all_fish_owned=fish_stats, all_weapons_owned=weapons_stats)
+    return render_template('profile.html', user=user, all_fish_owned=fish, all_weapons_owned=weapons)
 
 @app.post('/profile')
 def profile_post():
@@ -66,7 +63,6 @@ def profile_post():
 def travel_get():
     user = session["username"]
     accordion_data = parse_chance_list(user, utility.species_list)
-    print(f"DEBUG: accordion_data = {accordion_data}")
     current_country_chances = get_current_country_chances(user, utility.species_list)
     return render_template(
         'travel.html',
@@ -87,15 +83,13 @@ def travel_post():
 def shop_get():
     user = utility.get_user(session["username"])
 
-    random_fish = utility.general_query("SELECT * FROM fish WHERE owner=? ORDER BY random() LIMIT 6", [user['id']])
+    random_fish = utility.general_query("SELECT * FROM fish WHERE owner=? AND number_owned>0 ORDER BY random() LIMIT 6", [user['id']])
     fish_stats = []
     
     for fish in random_fish:
-        raw = utility.pull_cache("fish", ("scientific_name", fish["scientific_name"]))
+        data = battle.initialize_fish(fish["scientific_name"])
 
-        data = battle.initialize_fish(raw)
-
-        fish["price"] = int((data["stats"]["max_health"] + data["stats"]["accuracy"]) / 2)
+        fish["price"] = int((data["max_health"] + data["accuracy"]) / 2)
 
         # 0 index: fish data including health and accuracy; 1 index: number owned; 2 index: price
         fish_stats.append([data, fish["number_owned"], fish["price"]])
@@ -103,7 +97,7 @@ def shop_get():
 
     weapons = utility.query_cache("SELECT * FROM weapons ORDER BY random() LIMIT 6")
     for weapon in weapons:
-        weapon["price"] = weapon["range"] + weapon["max_durability"]
+        weapon["price"] = weapon["accuracy"] + weapon["max_durability"]
 
     return render_template('shop.html', weapons=weapons, random_fish=fish_stats, user=user)
 
@@ -115,12 +109,7 @@ def sell_fish():
     fish_price = request.form.get('fish_price')
 
     utility.general_query("UPDATE profiles SET balance=balance+? WHERE username=?", [fish_price, session["username"]])
-
-    number_owned = utility.general_query("SELECT number_owned FROM fish WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
-    if number_owned[0]['number_owned'] == 1:
-        utility.general_query("DELETE FROM fish WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
-    else:
-        utility.general_query("UPDATE fish SET number_owned=number_owned-1 WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
+    utility.general_query("UPDATE fish SET number_owned=number_owned-1 WHERE scientific_name=? AND owner=?", [fish_sold, user['id']])
     
     return redirect(url_for('shop_get'))
 

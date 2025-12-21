@@ -18,18 +18,21 @@ def roll_dice(dice):
     return output
 
 def get_random_weapon():
-    all_weapons = utility.call_api("Dnd", "/api/2014/equipment-categories/simple-weapons")["equipment"]
-    raw = utility.call_api("Dnd", random.choice(all_weapons)["url"])
+    try:
+        all_weapons = utility.call_api("Dnd", "/api/2014/equipment-categories/simple-weapons")["equipment"]
+        raw = utility.call_api("Dnd", random.choice(all_weapons)["url"])
 
-    weapon = {
-        "name": raw["name"],
-        "damage_dice": raw["damage"]["damage_dice"],
-        "damage_type": raw["damage"]["damage_type"]["name"],
-        "max_durability": max(raw["weight"], 1) * 10,
-        "range": raw["range"]["normal"]
-    }
+        weapon = {
+            "name": raw["name"],
+            "damage_dice": raw["damage"]["damage_dice"],
+            "max_durability": max(raw["weight"], 1) * 10,
+            "accuracy": min(100, raw["range"]["normal"])
+        }
 
-    utility.cache_entry("weapons", weapon)
+        utility.cache_entry("weapons", weapon)
+    except Exception:
+        weapon = utility.query_cache("SELECT * FROM weapons ORDER BY random() LIMIT 1;")[0]
+
     return weapon
 
 def get_fish_stats(status):
@@ -57,58 +60,47 @@ def get_fish_stats(status):
     }
     return stats[status]
 
-def initialize_fish(fish):
-    fish["stats"] = get_fish_stats(fish["status"])
-    fish["stats"]["health"] = fish["stats"]["max_health"]
-
-    fish["stats"]["accuracy"] = min(100, fish["range"])
-    del fish["range"]
-
+def initialize_fish(scientific_name):
+    fish = utility.pull_cache("fish", ("scientific_name", scientific_name))
+    stats = get_fish_stats(fish["status"])
+    for key in stats:
+        fish[key] = stats[key]
+    fish["health"] = fish["max_health"]
     return fish
 
 def initialize_weapon(name, user):
     item = utility.general_query("SELECT * FROM weapons WHERE name=? AND owner=?", [name, user])[0]
     weapon = utility.pull_cache("weapons", ("name", name))
-
     weapon["durability"] = item['durability']
     weapon["number_owned"] = item["number_owned"]
-    weapon["accuracy"] = min(100, weapon["range"] * 10)
-    del weapon["range"]
-
     return weapon
 
 @bp.get('/')
 def battle_get():
-    scientific_name = request.args["fish"]
-    raw = utility.pull_cache("fish", ("scientific_name", scientific_name))
-    fish = initialize_fish(raw)
-
     user = utility.get_user(session['username'])
-
-    session["battle_log"] = [("You're starting a battle!", "success")]
 
     if (user['equipped_weapon'] == None):
         flash("You don't have a weapon equipped and you fled the battle!", "danger")
         return redirect(url_for("profile_get"))
+    
+    session["battle_log"] = [("You're starting a battle!", "success")]
 
+    scientific_name = request.args["fish"]
+    fish = initialize_fish(scientific_name)
     weapon = initialize_weapon(user['equipped_weapon'], user["id"])
 
     return render_template("battle.html", fish=fish, weapon=weapon, user=user)
 
 @bp.post('/')
 def battle_post():
-    scientific_name = request.form["fish_species"]
-    raw = utility.pull_cache("fish", ("scientific_name", scientific_name))
-    fish = initialize_fish(raw)
-    fish["stats"]["health"] = int(request.form["fish_health"])
-
     user = utility.get_user(session['username'])
-    weapon = initialize_weapon(user['equipped_weapon'], user["id"])
 
-    print(weapon)
-    print(fish)
-    print(user)
-    print(session["battle_log"])
+    scientific_name = request.form["fish_species"]
+
+    weapon = initialize_weapon(user['equipped_weapon'], user["id"])
+    fish = initialize_fish(scientific_name)
+
+    fish["health"] = int(request.form["fish_health"])
 
     # Decrease durability
     weapon["durability"] -= 1
@@ -133,7 +125,7 @@ def battle_post():
         damage_dice = weapon["damage_dice"]
         damage = roll_dice(damage_dice)
 
-        if fish["stats"]["health"] <= damage:
+        if fish["health"] <= damage:
             existing = utility.general_query("SELECT * FROM fish WHERE owner=? AND scientific_name=?", [user["id"], fish["scientific_name"]])
             if len(existing) > 0:
                 utility.general_query("UPDATE fish SET number_caught=number_caught+1, number_owned=number_owned+1 WHERE scientific_name=? AND owner=?", [fish["scientific_name"], user["id"]])
@@ -143,15 +135,15 @@ def battle_post():
             flash("You won the battle and caught this fish!", "success")
             return redirect(url_for("profile_get"))
 
-        fish["stats"]["health"] -= damage
+        fish["health"] -= damage
         session["battle_log"].append((f"You attacked for {damage} damage!", "success"))
 
     # Fish attacks
-    miss = random.randint(0, 100) > fish['stats']['accuracy']
+    miss = random.randint(0, 100) > fish['accuracy']
     if miss:
         session["battle_log"].append(("The fish tried to attack you but missed!", "warning"))
     else:
-        damage_dice = fish["stats"]["damage"]
+        damage_dice = fish["damage"]
         damage = roll_dice(damage_dice)
 
         if user["health"] <= damage:
@@ -166,5 +158,3 @@ def battle_post():
 
     flash("")
     return render_template("battle.html", fish=fish, weapon=weapon, user=user)
-
-# print(get_random_weapon())
