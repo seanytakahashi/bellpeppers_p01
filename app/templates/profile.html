@@ -16,15 +16,15 @@
   <h3>Your Stats</h3>
   Level: <strong>{{ user["level"] }}</strong><br>
   XP: <strong>{{ user["xp"] }} / 100 </strong><br>
-  Current health: <strong>{{ user["health"] }}</strong><br>
+  Current health: <strong>{{ user["health"] }} / {{ 100 + 5 * user["level"] }}</strong><br>
   Current country: <strong>{{ user["country"] }}</strong><br>
-  Current balance: <strong>{{ user["balance"] }}</strong><br>
+  Current balance: <strong>{{ user["balance"] }} Gold</strong><br>
   Equipped Weapon: <strong>{{ user["equipped_weapon"] }}</strong>
 </div>
 
 <h3>Fish Caught</h3>
 {% if all_fish_owned %}
-<div class="card-deck">
+<div class="card-columns">
   {% for fish in all_fish_owned %}
     <div class="card mb-3">
       <div class="card-body">
@@ -47,7 +47,7 @@
 
 <h3>Weapons Owned</h3>
 {% if all_weapons_owned %}
-<div class="card-deck">
+<div class="card-columns">
   {% for weapons in all_weapons_owned %}
   <div class="card mb-3">
     <div class="card-body">
