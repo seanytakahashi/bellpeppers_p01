@@ -180,3 +180,8 @@ ivanC -- 2025-12-21 12:05
 
 seanT -- 2025-12-21 15:10
 - Added healing potions
+
+FINAL DD EDITS -- 2025-12-22 12:15
+- Added cache database info
+- Cleaned up API explanation
+- Updated site map to reflect final pages
